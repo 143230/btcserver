@@ -65,12 +65,18 @@ public class SchedulerThread extends Thread {
                     }
 //                  executor.execute(new BitFinexHtmlUnitSpiderService(coinService, url));
                 }
-                if (i % 120 == 0) {
+                if (i % 180 == 0) {
                     executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "1839109034"));
                     executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "3632226187"));
                     executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "2980854595"));
                     executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "2188341020"));
                     executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "3029680495"));
+                    executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "2149945883"));
+                    executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "1940696741"));
+                    executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "3803967956"));
+                    executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "3802128787"));
+                    executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "1908243651"));
+                    executor.execute(new WeiboHtmlUnitSpiderService(weiboService, "5349265054"));
 //                    executor.execute(new TwitterHtmlUnitSpiderService(weiboService, "civickey"));//VitalikButerin
 //                    executor.execute(new TwitterHtmlUnitSpiderService(weiboService, "VitalikButerin"));
 //                    executor.execute(new TwitterHtmlUnitSpiderService(weiboService, "VinnyLingham"));
