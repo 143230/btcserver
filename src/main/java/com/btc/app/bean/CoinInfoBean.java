@@ -1,5 +1,7 @@
 package com.btc.app.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 
 public class CoinInfoBean implements Serializable{
@@ -7,6 +9,7 @@ public class CoinInfoBean implements Serializable{
     private String chinesename;
     private String englishname;
     private String imageurl;
+    @JSONField(serialize = false)
     private String id;
 
     public String getId() {

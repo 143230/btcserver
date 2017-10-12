@@ -1,5 +1,6 @@
 package com.btc.app.bean;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.btc.app.util.MarketTypeMapper;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import static com.btc.app.util.MarketTypeMapper.getMarketNameType;
 
 public class CoinBean {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    @JSONField(serialize = false)
     private int id;
     private String url;
     private String englishname;

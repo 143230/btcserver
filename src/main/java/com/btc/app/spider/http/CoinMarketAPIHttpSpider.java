@@ -59,7 +59,7 @@ public class CoinMarketAPIHttpSpider extends HttpBasicSpider implements CoinHuml
             String id = object.getString("id");
             String name = object.getString("name");
             String symbol = object.getString("symbol");
-            int rank = object.getInt("rank");
+            int rank = getJsonInteger(object, "rank");
             BigDecimal price_usd = getJsonBigDecimal(object, "price_usd");
             BigDecimal price_btc = getJsonBigDecimal(object, "price_btc");
             BigDecimal volume_usd_24h = getJsonBigDecimal(object, "24h_volume_usd");
@@ -72,7 +72,7 @@ public class CoinMarketAPIHttpSpider extends HttpBasicSpider implements CoinHuml
             BigDecimal price = getJsonBigDecimal(object, "price_" + convert.toLowerCase());
             BigDecimal volume_24h = getJsonBigDecimal(object, "24h_volume_" + convert.toLowerCase());
             BigDecimal market_cap = getJsonBigDecimal(object, "market_cap_" + convert.toLowerCase());
-            Date date = new Date(object.getLong("last_updated") * 1000);
+            Date date = new Date(getJsonLong(object, "last_updated"));
             String url = "https://coinmarketcap.com/currencies/" + id + "/";
             String imageUrl = "https://files.coinmarketcap.com/static/img/coins/128x128/" + id + ".png";
             CoinBean bean = new CoinBean();
@@ -107,6 +107,22 @@ public class CoinMarketAPIHttpSpider extends HttpBasicSpider implements CoinHuml
             return object.getBigDecimal(key);
         } catch (JSONException e) {
             return BigDecimal.ZERO;
+        }
+    }
+
+    private long getJsonLong(JSONObject object, String key) {
+        try {
+            return object.getLong(key) * 1000;
+        } catch (JSONException e) {
+            return System.currentTimeMillis();
+        }
+    }
+
+    private int getJsonInteger(JSONObject object, String key) {
+        try {
+            return object.getInt(key);
+        } catch (JSONException e) {
+            return 0;
         }
     }
 
