@@ -46,7 +46,7 @@
   </select>
 
   <insert id="insert" parameterType="com.btc.app.bean.CoinBean" >
-    insert into coin (englishname, chinesename,rank, symbol, coin_id
+    insert into coin (englishname, chinesename,rank, symbol, coin_id,
       yprice,price, percent,turnvolume,turnnumber,update_time,market_type,platform)
     values (#{englishname,jdbcType=VARCHAR}, #{chinesename,jdbcType=VARCHAR},#{rank,jdbcType=INTEGER},
       #{symbol,jdbcType=VARCHAR}, #{coin_id,jdbcType=VARCHAR}, #{yprice,jdbcType=DECIMAL},
