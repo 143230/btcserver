@@ -203,7 +203,7 @@ public class CoinBean {
         if(!(obj instanceof CoinBean))return false;
         CoinBean bean = (CoinBean)obj;
         boolean a = bean.getMarket_type() == market_type;
-        boolean b = coin_id == null ? bean.getEnglishname() == null : coin_id.equals(bean.getEnglishname());
+        boolean b = coin_id == null ? bean.getCoin_id() == null : coin_id.equals(bean.getCoin_id());
         boolean c = platform == null ? bean.getPlatform() == null : platform.equals(bean.getPlatform());
         return a && b && c;
     }
