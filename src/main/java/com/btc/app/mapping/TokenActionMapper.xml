@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.btc.app.dao.TokenActionMapper">
+    <resultMap id="BaseResultMap" type="com.btc.app.bean.TokenActionBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="token" property="token" jdbcType="VARCHAR"/>
+        <result column="uid" property="uid" jdbcType="INTEGER"/>
+        <result column="actiontype" property="actiontype" jdbcType="INTEGER"/>
+        <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="other" property="other" jdbcType="VARCHAR"/>
+        <result column="actiontime" property="actiontime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, token, uid, actiontype, symbol, other, actiontime
+    </sql>
+
+    <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from tokenaction ORDER BY id DESC
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.btc.app.bean.TokenActionBean">
+    insert into tokenaction (token, uid,actiontype,symbol, other, actiontime)
+    values (#{token,jdbcType=VARCHAR},#{uid,jdbcType=INTEGER},#{actiontype,jdbcType=INTEGER},
+    #{symbol,jdbcType=VARCHAR},#{other,jdbcType=VARCHAR},NOW())
+  </insert>
+</mapper>

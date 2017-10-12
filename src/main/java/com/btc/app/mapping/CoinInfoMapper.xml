@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.btc.app.dao.CoinInfoMapper">
+    <resultMap id="BaseResultMap" type="com.btc.app.bean.CoinInfoBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="symbol" property="symbol" jdbcType="VARCHAR"/>
+        <result column="chinesename" property="chinesename" jdbcType="VARCHAR"/>
+        <result column="englishname" property="englishname" jdbcType="VARCHAR"/>
+        <result column="imageurl" property="imageurl" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, symbol, chinesename, englishname, imageurl
+  </sql>
+
+    <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from coininfo ORDER BY id DESC
+        limit 1
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+    select * from coininfo
+  </select>
+
+    <select id="getCoinInfo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT *
+    FROM coininfo
+    WHERE symbol = #{symbol,jdbcType=VARCHAR} LIMIT 1
+  </select>
+
+    <update id="update" parameterType="com.btc.app.bean.CoinInfoBean">
+    UPDATE coininfo
+    set symbol = #{symbol,jdbcType=VARCHAR}, englishname = #{englishname,jdbcType=VARCHAR},
+    chinesename = #{chinesename,jdbcType=VARCHAR} WHERE id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <insert id="insert" parameterType="com.btc.app.bean.CoinInfoBean">
+    insert into coininfo (symbol, englishname, chinesename,imageurl)
+    values (#{symbol,jdbcType=VARCHAR},#{englishname,jdbcType=VARCHAR},
+    #{chinesename,jdbcType=VARCHAR},#{imageurl,jdbcType=VARCHAR})
+  </insert>
+</mapper>

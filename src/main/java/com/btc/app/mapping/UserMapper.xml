@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.btc.app.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.btc.app.bean.UserBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="sex" property="sex" jdbcType="BOOLEAN"/>
+        <result column="register_time" property="register_time" jdbcType="TIMESTAMP"/>
+        <result column="account_status" property="account_status" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, username, phone, password, address, email, sex,register_time,account_status
+  </sql>
+
+    <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        limit 1
+    </select>
+
+    <select id="searchUser" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from user where phone = #{phone,jdbcType=VARCHAR}
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.btc.app.bean.UserBean">
+    insert into user (username, phone, password, address, email, sex,register_time,account_status)
+    values (#{username,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR},
+      #{sex,jdbcType=BOOLEAN},NOW(),#{account_status,jdbcType=INTEGER})
+  </insert>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.btc.app.dao.WeiboMapper">
+    <resultMap id="BaseResultMap" type="com.btc.app.bean.WeiboBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="wbid" property="wbid" jdbcType="VARCHAR"/>
+        <result column="uid" property="uid" jdbcType="VARCHAR"/>
+        <result column="imageurl" property="imageurl" jdbcType="VARCHAR"/>
+        <result column="wbname" property="wbname" jdbcType="VARCHAR"/>
+        <result column="from_device" property="from_device" jdbcType="VARCHAR"/>
+        <result column="text" property="text" jdbcType="VARCHAR"/>
+        <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
+        <result column="from_web" property="from_web" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, wbid,uid,imageurl, wbname, from_device, text,update_time,from_web
+  </sql>
+
+    <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from weibo
+        limit 1
+    </select>
+
+    <select id="isHave" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from weibo where wbid = #{wbid,jdbcType=VARCHAR}
+        limit 1
+    </select>
+
+    <select id="getLatestWeiboInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select * from weibo ORDER BY update_time DESC limit #{count,jdbcType=INTEGER}
+  </select>
+
+    <select id="getWeiboInfo" resultMap="BaseResultMap">
+    select * from weibo
+    ORDER BY id DESC limit #{start,jdbcType=INTEGER},#{count,jdbcType=INTEGER}
+  </select>
+
+    <insert id="insert" parameterType="com.btc.app.bean.WeiboBean">
+    insert into weibo (uid,wbid,wbname,imageurl,
+      from_device, text,update_time,from_web)
+    values (#{uid,jdbcType=VARCHAR},#{wbid,jdbcType=VARCHAR}, #{wbname,jdbcType=VARCHAR},
+     #{imageurl,jdbcType=VARCHAR}, #{from_device,jdbcType=VARCHAR},
+      #{text,jdbcType=VARCHAR},#{update_time,jdbcType=TIMESTAMP},#{from_web,jdbcType=VARCHAR})
+  </insert>
+</mapper>

@@ -1,0 +1,160 @@
+.header{
+    text-align: center;
+}
+.noteandquestion{
+    display: block;
+}
+.nav-tabs>li{
+    margin-bottom: -1px;
+}
+.note-tab>.nq-panel{
+    display:none;
+}
+.note-tab>.active{
+    display:block;
+}
+body>.note-question-panel{
+    width:180px;
+    height:35px;
+}
+body>.active{
+    width:400px;
+    height:308px;
+    bottom:-400px;
+}
+.panel-nq{
+    color: #333;
+    background-color: #f5f5f5;
+    border-color: #ddd;
+    border-bottom: 1px solid transparent
+}
+.panel-heading{
+    border-top-left-radius: 1px;
+    border-top-right-radius: 1px;
+    padding: 10px 15px;
+}
+.panel-heading>input{
+    width:310px;
+    height:30px;
+}
+.panel-content>textarea{
+    width:388px;
+    height:210px;
+}
+.btn-save{
+    margin-left: 101px;
+}
+.btn-cancel{
+    margin-left:50px;
+}
+.paging-panel>ul{
+    padding:0;
+}
+.paging-panel>ul{
+    padding:0;
+}
+.paging-panel .li-right{
+    float:right;
+}
+span>a{
+    color:gray;
+}
+.paper-time:before{
+    font-size: 11.9px;
+    content: '\00A0•\00A0';
+}
+.footer{
+    padding: 10px 0;
+    text-align: center;
+}
+.content-panel{
+    width:60%;
+    padding:0 1.5rem;
+    margin:0 auto;
+}
+.content-small{
+    width:50%;
+}
+.paper-author>a:hover{
+    text-decoration:none;
+}
+.dropdown-toggle>.active-up{
+    border-top:none;
+    border-bottom:4px solid;
+}
+.page-center{
+    position:absolute;
+    height:30px;
+    top: 65%;
+    left:45%;
+}
+.dropdown-toggle:hover + .dropdown-menu{
+    display: block;
+}
+.dropdown-menu:hover{
+    display: block;
+}
+.paper-tag{
+    padding: 5px 10px;
+    margin: 2px 5px;
+    border-radius: 5px;
+    line-height: 1.4;
+}
+.user-panel{
+    width:100%;
+    margin:0 auto;
+    max-width:1000px;
+}
+.user-nav{
+    width:25%;
+    padding:0 15px;
+    float:left;
+    position:relative;
+}
+.user-content{
+    width:75%;
+    padding:15px 15px;
+    float:right;
+}
+.user-sidebar{
+    border-right: 1px solid #eee;
+    position: fixed;
+    max-width:235px;
+}
+.user-sidebar>.nav-tabs{
+    border-bottom: none;
+}
+.user-sidebar li{
+    width:100%;
+}
+.user-sidebar>.nav-tabs>li.active>a, .user-sidebar>.nav-tabs>li.active>a:focus, .user-sidebar>.nav-tabs>li.active>a:hover{
+    border-bottom-color: #ddd;
+    border-right-color: transparent;
+}
+.user-sidebar>.nav-tabs>li>a{
+    border-radius: 4px 0 0 4px;
+    margin-right: -1px;
+}
+.user-content>.user-panel{
+    display: none;
+}
+.form-control-input{
+    border: 1px solid #e0e0e0;
+    padding: 5px 8px;
+    color: #616161;
+    background: #fff;
+    box-shadow: none !important;
+    font-size: 0.85em;
+    font-weight: 300;
+    height: 40px;
+    border-radius: 0;
+    -webkit-appearance: none;
+}
+
+
+/*
+总是放在最后
+ */
+.user-content>.active{
+      display: block;
+}

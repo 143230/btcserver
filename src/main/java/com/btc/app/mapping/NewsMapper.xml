@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.btc.app.dao.NewsMapper">
+    <resultMap id="BaseResultMap" type="com.btc.app.bean.NewsBean">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="new_type" property="new_type" jdbcType="INTEGER"/>
+        <result column="imageurl" property="imageurl" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="webname" property="webname" jdbcType="VARCHAR"/>
+        <result column="webicon" property="webicon" jdbcType="VARCHAR"/>
+        <result column="abstracts" property="abstracts" jdbcType="VARCHAR"/>
+        <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, url, new_type, imageurl,webicon,webname, title,abstracts,update_time
+  </sql>
+
+    <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from news
+        limit 1
+    </select>
+
+    <select id="isHave" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from news where url = #{url,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getLatestNewsInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select * from news ORDER BY update_time DESC limit #{count,jdbcType=INTEGER}
+  </select>
+
+    <select id="getNewsInfo" resultMap="BaseResultMap">
+    select * from news
+    ORDER BY id DESC limit #{start,jdbcType=INTEGER},#{count,jdbcType=INTEGER}
+  </select>
+
+    <insert id="insert" parameterType="com.btc.app.bean.NewsBean">
+    insert into news (url,new_type,webicon,webname,
+      imageurl, title,abstracts,update_time)
+    values (#{url,jdbcType=VARCHAR}, #{new_type,jdbcType=INTEGER}, #{webicon,jdbcType=INTEGER}, #{webname,jdbcType=INTEGER},
+     #{imageurl,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR}, #{abstracts,jdbcType=VARCHAR},#{update_time,jdbcType=TIMESTAMP})
+  </insert>
+</mapper>

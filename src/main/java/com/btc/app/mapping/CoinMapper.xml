@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.btc.app.dao.CoinMapper" >
+  <resultMap id="BaseResultMap" type="com.btc.app.bean.CoinBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <id column="rank" property="rank" jdbcType="INTEGER" />
+    <result column="englishname" property="englishname" jdbcType="VARCHAR" />
+    <result column="chinesename" property="chinesename" jdbcType="VARCHAR" />
+    <result column="symbol" property="symbol" jdbcType="VARCHAR" />
+    <result column="coin_id" property="coin_id" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="yprice" property="yprice" jdbcType="DECIMAL" />
+    <result column="percent" property="percent" jdbcType="DECIMAL" />
+    <result column="turnvolume" property="turnvolume" jdbcType="DECIMAL" />
+    <result column="turnnumber" property="turnnumber" jdbcType="DECIMAL" />
+    <result column="update_time" property="update_time" jdbcType="TIMESTAMP" />
+    <result column="market_type" property="market_type" jdbcType="INTEGER" />
+    <result column="platform" property="platform" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, englishname, chinesename, symbol, coin_id, rank, yprice, price, percent,turnvolume,turnnumber,update_time,market_type, platform
+  </sql>
+
+  <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from coin ORDER BY id DESC
+    limit 1
+  </select>
+
+  <select id="getLatestCoinInfo" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+    select * from coin ORDER BY update_time DESC limit #{count,jdbcType=INTEGER}
+  </select>
+
+  <select id="getTodayCoinInfo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT a.*
+    FROM coin a
+    WHERE a.id in (
+    SELECT max(id)
+    FROM coin GROUP BY englishname,market_type,platform)
+  </select>
+
+  <select id="getCoinInfo" resultMap="BaseResultMap">
+    select * from coin
+    ORDER BY id DESC limit #{start,jdbcType=INTEGER},#{count,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insert" parameterType="com.btc.app.bean.CoinBean" >
+    insert into coin (englishname, chinesename,rank,
+      yprice,price, percent,turnvolume,turnnumber,update_time,market_type,platform)
+    values (#{englishname,jdbcType=VARCHAR}, #{chinesename,jdbcType=VARCHAR},#{rank,jdbcType=INTEGER},#{yprice,jdbcType=DECIMAL},
+      #{price,jdbcType=DECIMAL}, #{percent,jdbcType=DECIMAL},#{turnvolume,jdbcType=DECIMAL},#{turnnumber,jdbcType=DECIMAL},
+      #{update_time,jdbcType=TIMESTAMP},#{market_type,jdbcType=INTEGER},#{platform,jdbcType=VARCHAR})
+  </insert>
+</mapper>
