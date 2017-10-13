@@ -18,10 +18,10 @@ import static com.btc.app.util.MarketTypeMapper.getMarketNameType;
 public class XinGePush {
     public static final int ENVIRONMENT_TEST = 0;
     public static final int ENVIRONMENT_PRODUCT = 1;
-    public static final int current_environment = ENVIRONMENT_TEST;
-    public static final boolean IOS_PUSH_ENABLED = true;
     public static final boolean ANDROID_PUSH_ENABLE = true;
-//    public static final int current_environment = ENVIRONMENT_PRODUCT;
+    public static final int current_environment = ENVIRONMENT_PRODUCT;
+//    public static final int current_environment = ENVIRONMENT_TEST;
+public static final boolean IOS_PUSH_ENABLED = true;
 
     public static enum Device {
         android,
@@ -203,7 +203,6 @@ public class XinGePush {
         Message mess = new Message();
         mess.setExpireTime(86400);
         mess.setTitle(bean.getWbname());
-
         mess.setType(Message.TYPE_NOTIFICATION);
         String text = bean.getRawText();
         String type = bean.getFrom_web();
@@ -273,6 +272,7 @@ public class XinGePush {
     private Message createNewsMessage(NewsBean bean) {
         Message mess = new Message();
         mess.setExpireTime(86400);
+        mess.setType(Message.TYPE_NOTIFICATION);
         mess.setTitle(bean.getTitle());
         String text = bean.getAbstracts();
         if (text != null) {
@@ -335,6 +335,7 @@ public class XinGePush {
     private Message createCoinMessage(CoinBean bean) {
         Message mess = new Message();
         mess.setExpireTime(86400);
+        mess.setType(Message.TYPE_NOTIFICATION);
         String title = bean.getChinesename() + "/" + bean.getEnglishname();
         if (bean.getRank() > 0) {
             title += "            排名：" + bean.getRank();
