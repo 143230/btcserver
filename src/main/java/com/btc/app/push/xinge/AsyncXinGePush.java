@@ -62,12 +62,7 @@ public class AsyncXinGePush implements Runnable {
                                 "Cancelled Coin Push:" + invoker);
                     }
                 } else {
-                    JSONObject json = null;
-                    if (XinGePush.current_environment == XinGePush.ENVIRONMENT_PRODUCT) {
-                        json = invoker.invoke();
-                    } else {
-                        json = new JSONObject("{\"result\":{\"push_id\":\"=====ONLY_TEST=====\"},\"ret_code\":0}");
-                    }
+                    JSONObject json = invoker.invoke();
                     int ret_code = json.getInt("ret_code");
                     if (ret_code == 0) {
                         invoker.setCreateTime(System.currentTimeMillis());

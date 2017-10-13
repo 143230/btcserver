@@ -1,5 +1,6 @@
 package com.btc.app.push.xinge;
 
+import com.tencent.xinge.Message;
 import com.tencent.xinge.MessageIOS;
 import com.tencent.xinge.XingeApp;
 import org.json.JSONObject;
@@ -9,10 +10,11 @@ import java.util.List;
 import static com.btc.app.push.xinge.XinGePush.IOS_TYPE;
 
 public class PushByTokenInvoker extends PushMethodInvoker {
-    private final MessageIOS messageIOS;
+    private MessageIOS messageIOS;
+    private Message message;
     private final String token;
 
-    public PushByTokenInvoker(XingeApp xinge, int TYPE,
+    public PushByTokenInvoker(XinGePush xinge, int TYPE,
                               AsyncXinGePushListener listener,
                               MessageIOS messageIOS, String token) {
         super(xinge, TYPE, listener);
@@ -20,8 +22,24 @@ public class PushByTokenInvoker extends PushMethodInvoker {
         this.token = token;
     }
 
+    public PushByTokenInvoker(XinGePush xinge, int TYPE,
+                              AsyncXinGePushListener listener,
+                              Message message, String token) {
+        super(xinge, TYPE, listener);
+        this.message = message;
+        this.token = token;
+    }
+
     public JSONObject invoke() {
-        return xinge.pushSingleDevice(token, messageIOS, IOS_TYPE);
+        if(messageIOS != null) {
+            return xinge.pushSingleDevice(token, messageIOS);
+        }else{
+            return xinge.pushSingleDevice(token, message);
+        }
+    }
+
+    public Message getMessage() {
+        return message;
     }
 
     public MessageIOS getMessageIOS() {
@@ -35,6 +53,10 @@ public class PushByTokenInvoker extends PushMethodInvoker {
 
     @Override
     public String toString() {
-        return messageIOS.toJson();
+        if(messageIOS != null) {
+            return messageIOS.toJson();
+        }else{
+            return message.toJson();
+        }
     }
 }

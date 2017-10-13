@@ -9,14 +9,16 @@ import java.util.List;
 
 public class BatchSetTagsInvoker extends PushMethodInvoker {
 
+    private final XinGePush.Device device;
     private final List<TagTokenPair> pairs;
-    public BatchSetTagsInvoker(XingeApp xinge, int TYPE,
-                                 AsyncXinGePushListener listener,
-                               List<TagTokenPair> pairs) {
+    public BatchSetTagsInvoker(XinGePush xinge, int TYPE,
+                               AsyncXinGePushListener listener,
+                               List<TagTokenPair> pairs, XinGePush.Device device) {
         super(xinge, TYPE, listener);
         this.pairs = pairs;
+        this.device = device;
     }
     public JSONObject invoke() {
-        return xinge.BatchSetTag(pairs);
+        return xinge.batchSetTags(pairs, device);
     }
 }

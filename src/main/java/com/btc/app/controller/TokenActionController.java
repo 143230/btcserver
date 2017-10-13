@@ -100,7 +100,8 @@ public class TokenActionController {
         String pid = request.getParameter("pid");
         String account = request.getParameter("account");
         String tagname = request.getParameter("tagname");
-        if (token == null || tagname == null || pid == null) {
+        String device = request.getParameter("device");
+        if (token == null || tagname == null || pid == null || device == null) {
             json.put("status", "error");
             json.put("message", "illegal parameter for this api.");
             json.put("code", -1);
@@ -118,7 +119,12 @@ public class TokenActionController {
             json.put("message", "please register first.");
             json.put("code", -2);
         }
-        org.json.JSONObject ret_json = push.batchSetTagsSync(token,tagname);
+        org.json.JSONObject ret_json;
+        if(device.equalsIgnoreCase("ios")){
+            ret_json = push.batchSetTagsSync(token,tagname, XinGePush.Device.ios);
+        } else{
+            ret_json = push.batchSetTagsSync(token,tagname, XinGePush.Device.android);
+        }
         if(ret_json.getInt("ret_code") != 0){
             return ret_json.toString();
         }
@@ -148,7 +154,8 @@ public class TokenActionController {
         String pid = request.getParameter("pid");
         String account = request.getParameter("account");
         String tagname = request.getParameter("tagname");
-        if (token == null || tagname == null || pid == null) {
+        String device = request.getParameter("device");
+        if (token == null || tagname == null || pid == null || device == null) {
             json.put("status", "error");
             json.put("message", "illegal parameter for this api.");
             json.put("code", -1);
@@ -166,7 +173,12 @@ public class TokenActionController {
             json.put("message", "please register first.");
             json.put("code", -2);
         }
-        org.json.JSONObject ret_json = push.batchDelTagsSync(token,tagname);
+        org.json.JSONObject ret_json;
+        if(device.equalsIgnoreCase("ios")){
+            ret_json = push.batchDelTagsSync(token,tagname, XinGePush.Device.ios);
+        } else{
+            ret_json = push.batchDelTagsSync(token,tagname, XinGePush.Device.android);
+        }
         if(ret_json.getInt("ret_code") != 0){
             return ret_json.toString();
         }

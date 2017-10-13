@@ -1,5 +1,6 @@
 package com.btc.app.push.xinge;
 
+import com.tencent.xinge.Message;
 import com.tencent.xinge.MessageIOS;
 import com.tencent.xinge.XingeApp;
 import org.json.JSONObject;
@@ -9,11 +10,12 @@ import java.util.List;
 import static com.btc.app.push.xinge.XinGePush.IOS_TYPE;
 
 public class PushByTagsInvoker extends PushMethodInvoker {
-    private final MessageIOS messageIOS;
+    private MessageIOS messageIOS;
+    private Message message;
     private final List<String> tags;
     private final String tagOp;
 
-    public PushByTagsInvoker(XingeApp xinge, int TYPE,
+    public PushByTagsInvoker(XinGePush xinge, int TYPE,
                              AsyncXinGePushListener listener,
                              MessageIOS messageIOS,
                              List<String> tags, String tagOp) {
@@ -23,8 +25,22 @@ public class PushByTagsInvoker extends PushMethodInvoker {
         this.tagOp = tagOp;
     }
 
+    public PushByTagsInvoker(XinGePush xinge, int TYPE,
+                             AsyncXinGePushListener listener,
+                             Message message,
+                             List<String> tags, String tagOp) {
+        super(xinge, TYPE, listener);
+        this.message = message;
+        this.tags = tags;
+        this.tagOp = tagOp;
+    }
+
     public JSONObject invoke() {
-        return xinge.pushTags(0, tags, tagOp, messageIOS, IOS_TYPE);
+        if(messageIOS != null) {
+            return xinge.pushByTags(tags, tagOp, messageIOS);
+        }else {
+            return xinge.pushByTags(tags,tagOp, message);
+        }
     }
 
     public MessageIOS getMessageIOS() {
@@ -41,6 +57,10 @@ public class PushByTagsInvoker extends PushMethodInvoker {
 
     @Override
     public String toString() {
-        return messageIOS.toJson();
+        if(messageIOS != null) {
+            return messageIOS.toJson();
+        }else{
+            return message.toJson();
+        }
     }
 }

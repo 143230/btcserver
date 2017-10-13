@@ -9,13 +9,15 @@ import java.util.List;
 public class BatchDelTagsInvoker extends PushMethodInvoker {
 
     private final List<TagTokenPair> pairs;
-    public BatchDelTagsInvoker(XingeApp xinge, int TYPE,
+    private final XinGePush.Device device;
+    public BatchDelTagsInvoker(XinGePush xinge, int TYPE,
                                AsyncXinGePushListener listener,
-                               List<TagTokenPair> pairs) {
+                               List<TagTokenPair> pairs, XinGePush.Device device) {
         super(xinge, TYPE, listener);
         this.pairs = pairs;
+        this.device = device;
     }
     public JSONObject invoke() {
-        return xinge.BatchDelTag(pairs);
+        return xinge.batchDelTags(pairs, device);
     }
 }

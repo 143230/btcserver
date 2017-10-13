@@ -31,10 +31,10 @@ public class SchedulerThread extends Thread {
         this.weiboService = weiboService;
         executor = new ThreadPoolExecutor(
                 20,
-                60,
+                80,
                 60,
                 TimeUnit.SECONDS,
-                new ArrayBlockingQueue<Runnable>(10),
+                new ArrayBlockingQueue<Runnable>(80),
                 new CustomThreadFactory(),
                 new CustomRejectedExecutionHandler());
     }

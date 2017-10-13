@@ -4,8 +4,6 @@ import com.btc.app.bean.CoinBean;
 import com.btc.app.bean.CoinInfoBean;
 import com.btc.app.bean.NewsBean;
 import com.btc.app.bean.WeiboBean;
-import com.btc.app.util.EmojiMapper;
-import com.btc.app.util.MarketTypeMapper;
 import com.tencent.xinge.*;
 import org.json.JSONObject;
 
@@ -21,7 +19,14 @@ public class XinGePush {
     public static final int ENVIRONMENT_TEST = 0;
     public static final int ENVIRONMENT_PRODUCT = 1;
     public static final int current_environment = ENVIRONMENT_TEST;
+    public static final boolean IOS_PUSH_ENABLED = true;
+    public static final boolean ANDROID_PUSH_ENABLE = true;
 //    public static final int current_environment = ENVIRONMENT_PRODUCT;
+
+    public static enum Device {
+        android,
+        ios
+    }
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -55,21 +60,104 @@ public class XinGePush {
         pusher.start();
     }
 
-    //下发所有设备
-    protected JSONObject pushAllDevice(MessageIOS message) {
-        JSONObject obj = ios_xinge.pushAllDevice(0, message, XingeApp.IOSENV_DEV);
+    //下发所有IOS设备
+    protected JSONObject pushAllDevice(MessageIOS message, int type) {
+        if (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !IOS_PUSH_ENABLED) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====pushAllDevice_IOS_TEST=====\"},\"ret_code\":0}");
+        }
+        JSONObject obj = ios_xinge.pushAllDevice(0, message, type);
         return obj;
     }
 
     //下发所有Android设备
     protected JSONObject pushAllDevice(Message message) {
+        if (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !ANDROID_PUSH_ENABLE) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====pushAllDevice_ANDROID_TEST=====\"},\"ret_code\":0}");
+        }
         JSONObject obj = android_xinge.pushAllDevice(0, message);
         return obj;
     }
 
+    //单个设备下发Android通知消息
+    protected JSONObject pushSingleDevice(String token, Message message) {
+        if (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !ANDROID_PUSH_ENABLE) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====pushSingleDevice_ANDROID_TEST=====\"},\"ret_code\":0}");
+        }
+        JSONObject obj = android_xinge.pushSingleDevice(token, message);
+        return obj;
+    }
+
+    //单个设备IOS静默通知(iOS7以上)
+    protected JSONObject pushSingleDevice(String token, MessageIOS message) {
+        if (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !IOS_PUSH_ENABLED) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====pushSingleDevice_IOS_TEST=====\"},\"ret_code\":0}");
+        }
+        return ios_xinge.pushSingleDevice(token, message, IOS_TYPE);
+    }
+
+    //下发标签选中Android设备
+    protected JSONObject pushByTags(List<String> tags, String tagOp, Message message) {
+        if (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !ANDROID_PUSH_ENABLE) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====pushByTags_ANDROID_TEST=====\"},\"ret_code\":0}");
+        }
+        JSONObject ret = android_xinge.pushTags(0, tags, tagOp, message);
+        return ret;
+    }
+
+    //下发标签选中IOS设备
+    protected JSONObject pushByTags(List<String> tags, String tagOp, MessageIOS message) {
+        if (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !IOS_PUSH_ENABLED) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====pushByTags_IOS_TEST=====\"},\"ret_code\":0}");
+        }
+        JSONObject ret = ios_xinge.pushTags(0, tags, tagOp, message, IOS_TYPE);
+        return ret;
+    }
+
+    // 设置标签
+    protected JSONObject batchSetTags(List<TagTokenPair> pairs, Device device) {
+        if (device == Device.ios && (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !IOS_PUSH_ENABLED)) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====batchSetTags_IOS_TEST=====\"},\"ret_code\":0}");
+        } else if (device == Device.android && (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !ANDROID_PUSH_ENABLE)) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====batchSetTags_ANDROID_TEST=====\"},\"ret_code\":0}");
+        }
+        JSONObject ret;
+        switch (device) {
+            case ios:
+                ret = ios_xinge.BatchSetTag(pairs);
+                break;
+            case android:
+                ret = android_xinge.BatchSetTag(pairs);
+                break;
+            default:
+                ret = null;
+        }
+        return ret;
+    }
+
+    // 设置标签
+    protected JSONObject batchDelTags(List<TagTokenPair> pairs, Device device) {
+        if (device == Device.ios && (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !IOS_PUSH_ENABLED)) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====batchDelTags_IOS_TEST=====\"},\"ret_code\":0}");
+        } else if (device == Device.android && (XinGePush.current_environment == XinGePush.ENVIRONMENT_TEST || !ANDROID_PUSH_ENABLE)) {
+            return new JSONObject("{\"result\":{\"push_id\":\"=====batchDelTags_ANDROID_TEST=====\"},\"ret_code\":0}");
+        }
+        JSONObject ret;
+        switch (device) {
+            case ios:
+                ret = ios_xinge.BatchDelTag(pairs);
+                break;
+            case android:
+                ret = android_xinge.BatchDelTag(pairs);
+                break;
+            default:
+                ret = null;
+        }
+        return ret;
+    }
+
     /*==================华丽分割线，上面都不是我写的~~~====================================================================*/
 
-    private MessageIOS createWeiboMessage(WeiboBean bean) {
+    private MessageIOS createWeiboMessageIOS(WeiboBean bean) {
         MessageIOS mess = new MessageIOS();
         mess.setExpireTime(86400);
         JSONObject obj = new JSONObject();
@@ -111,7 +199,43 @@ public class XinGePush {
         return mess;
     }
 
-    private MessageIOS createNewsMessage(NewsBean bean) {
+    private Message createWeiboMessage(WeiboBean bean) {
+        Message mess = new Message();
+        mess.setExpireTime(86400);
+        mess.setTitle(bean.getWbname());
+
+        mess.setType(Message.TYPE_NOTIFICATION);
+        String text = bean.getRawText();
+        String type = bean.getFrom_web();
+        if (type.equalsIgnoreCase("WEIBO")) {
+            if (text != null && text.length() > 78) {
+                text = text.substring(0, 78);
+            }
+            if (text != null) {
+                mess.setContent(text + (text.length() >= 78 ? "..." : "") + "详情点击>>\n微博发表时间：" + sdf.format(bean.getUpdate_time()));
+            } else {
+                mess.setContent("详情点击进入>>\n微博发表时间：" + sdf.format(bean.getUpdate_time()));
+            }
+        } else if (type.equalsIgnoreCase("TWITTER")) {
+            if (text != null && text.length() > 158) {
+                text = text.substring(0, 158);
+            }
+            if (text != null) {
+                mess.setContent(text + (text.length() >= 158 ? "..." : "") + "详情点击>>\nTwitter发表时间：" + sdf.format(bean.getUpdate_time()));
+            } else {
+                mess.setContent("详情点击进入>>\nTwitter发表时间：" + sdf.format(bean.getUpdate_time()));
+            }
+        }
+        Map<String, Object> custom = new HashMap<String, Object>();
+        custom.put("imageurl", bean.getImageurl());
+        custom.put("type", bean.getFrom_web());
+        custom.put("weiboid", bean.getWbid());
+        custom.put("userid", bean.getUid());
+        mess.setCustom(custom);
+        return mess;
+    }
+
+    private MessageIOS createNewsMessageIOS(NewsBean bean) {
         MessageIOS mess = new MessageIOS();
         mess.setExpireTime(86400);
         JSONObject obj = new JSONObject();
@@ -146,7 +270,34 @@ public class XinGePush {
         return mess;
     }
 
-    private MessageIOS createCoinMessage(CoinBean bean) {
+    private Message createNewsMessage(NewsBean bean) {
+        Message mess = new Message();
+        mess.setExpireTime(86400);
+        mess.setTitle(bean.getTitle());
+        String text = bean.getAbstracts();
+        if (text != null) {
+            if (text.length() > 78) {
+                text = text.substring(0, 78);
+            }
+            text = text + "...详情点击>>";
+        } else {
+            text = "详情点击进入>>";
+        }
+        if (bean.getWebname() != null) {
+            mess.setContent(text + "\n新闻发表时间：" + sdf.format(bean.getUpdate_time())
+                    + "\n来自：" + bean.getWebname());
+        } else {
+            mess.setContent(text + "\n新闻发表时间：" + sdf.format(bean.getUpdate_time()));
+        }
+        Map<String, Object> custom = new HashMap<String, Object>();
+        custom.put("icon", bean.getWebicon());
+        custom.put("type", "NEWS");
+        custom.put("newsurl", bean.getUrl());
+        mess.setCustom(custom);
+        return mess;
+    }
+
+    private MessageIOS createCoinMessageIOS(CoinBean bean) {
         MessageIOS mess = new MessageIOS();
         mess.setExpireTime(86400);
         JSONObject obj = new JSONObject();
@@ -181,24 +332,70 @@ public class XinGePush {
         return mess;
     }
 
+    private Message createCoinMessage(CoinBean bean) {
+        Message mess = new Message();
+        mess.setExpireTime(86400);
+        String title = bean.getChinesename() + "/" + bean.getEnglishname();
+        if (bean.getRank() > 0) {
+            title += "            排名：" + bean.getRank();
+        }
+        mess.setTitle(title);
+        mess.setContent("涨跌幅：" + bean.getPercent().setScale(8,
+                BigDecimal.ROUND_HALF_UP).stripTrailingZeros().toPlainString().toString()
+                + "%\n当前价格：" + bean.getPrice() + getMarketNameType(bean.getMarket_type()) + "\n来自：" + bean.getPlatform() +
+                "\n点击获取更多虚拟币信息>>");
+        Map<String, Object> custom = new HashMap<String, Object>();
+        custom.put("type", "COIN");
+        custom.put("englishname", bean.getEnglishname());
+        CoinInfoBean infoBean = bean.getInfoBean();
+        if (infoBean != null && infoBean.getImageurl() != null) {
+            custom.put("image", infoBean.getImageurl());
+        }
+        custom.put("platform", bean.getPlatform());
+        if (bean.getRank() > 0) {
+            custom.put("rank", bean.getRank());
+        }
+        mess.setCustom(custom);
+        return mess;
+    }
+
+    private List<String> createTagByCoinBean(CoinBean bean){
+        List<String> tags = new ArrayList<String>();
+        tags.add(bean.getCoin_id());
+        return tags;
+    }
+
+    /*===========================================================================================*/
+
+    public synchronized JSONObject pushSyncWeiboToAll(WeiboBean bean) {
+        MessageIOS messageIOS = createWeiboMessageIOS(bean);
+        Message message = createWeiboMessage(bean);
+        JSONObject json = new JSONObject();
+        json.put("android", this.pushAllDevice(message));
+        json.put("ios", this.pushAllDevice(messageIOS, IOS_TYPE));
+        return json;
+    }
+
     public void pushAsyncWeiboToAll(WeiboBean bean) {
         pushAsyncWeiboToAll(bean, new DefaultAsyncXinGePushListener());
     }
 
     public void pushAsyncWeiboToAll(WeiboBean bean, AsyncXinGePushListener listener) {
-        MessageIOS mess = createWeiboMessage(bean);
-        PushMethodInvoker invoker = new PushAllDevicesInvoker(ios_xinge, PushMethodInvoker.WEIBO_MESSAGE, listener, mess);
+        MessageIOS messageIOS = createWeiboMessageIOS(bean);
+        PushMethodInvoker invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.WEIBO_MESSAGE, listener, messageIOS);
+        queue.add(invoker);
+        Message message = createWeiboMessage(bean);
+        invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.WEIBO_MESSAGE, listener, message);
         queue.add(invoker);
     }
 
-    public synchronized JSONObject pushSyncWeiboToAll(WeiboBean bean) {
-        MessageIOS mess = createWeiboMessage(bean);
-        return this.pushAllDevice(mess);
-    }
-
     public synchronized JSONObject pushSyncNewsToAll(NewsBean bean) {
-        MessageIOS mess = createNewsMessage(bean);
-        return this.pushAllDevice(mess);
+        MessageIOS messageIOS = createNewsMessageIOS(bean);
+        Message message = createNewsMessage(bean);
+        JSONObject json = new JSONObject();
+        json.put("android", this.pushAllDevice(message));
+        json.put("ios", this.pushAllDevice(messageIOS, IOS_TYPE));
+        return json;
     }
 
     public void pushASyncNewsToAll(NewsBean bean) {
@@ -206,14 +403,21 @@ public class XinGePush {
     }
 
     public void pushASyncNewsToAll(NewsBean bean, AsyncXinGePushListener listener) {
-        MessageIOS mess = createNewsMessage(bean);
-        PushMethodInvoker invoker = new PushAllDevicesInvoker(ios_xinge, PushMethodInvoker.NEWS_MESSAGE, listener, mess);
+        MessageIOS messageIOS = createNewsMessageIOS(bean);
+        PushMethodInvoker invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.NEWS_MESSAGE, listener, messageIOS);
+        queue.add(invoker);
+        Message message = createNewsMessage(bean);
+        invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.NEWS_MESSAGE, listener, message);
         queue.add(invoker);
     }
 
     public synchronized JSONObject pushSyncCoinToAll(CoinBean bean) {
-        MessageIOS mess = createCoinMessage(bean);
-        return this.pushAllDevice(mess);
+        MessageIOS messageIOS = createCoinMessageIOS(bean);
+        Message message = createCoinMessage(bean);
+        JSONObject json = new JSONObject();
+        json.put("android", this.pushAllDevice(message));
+        json.put("ios", this.pushAllDevice(messageIOS, IOS_TYPE));
+        return json;
     }
 
 
@@ -222,23 +426,38 @@ public class XinGePush {
     }
 
     public void pushASyncCoinToAll(CoinBean bean, AsyncXinGePushListener listener) {
-        MessageIOS mess = createCoinMessage(bean);
-        PushMethodInvoker invoker = new PushAllDevicesInvoker(ios_xinge, PushMethodInvoker.COIN_MESSAGE, listener, mess);
+        MessageIOS messageIOS = createCoinMessageIOS(bean);
+        PushMethodInvoker invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS);
+        queue.add(invoker);
+        Message message = createCoinMessage(bean);
+        invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, message);
         queue.add(invoker);
     }
 
-    public synchronized JSONObject batchSetTagsSync(String token, String tag) {
-        List<TagTokenPair> pairs = new ArrayList<TagTokenPair>();
-        pairs.add(new TagTokenPair(tag, token));
-        BatchSetTagsInvoker invoker = new BatchSetTagsInvoker(ios_xinge, PushMethodInvoker.BATCH_SET_TAG, null, pairs);
-        return invoker.invoke();
+    public void pushASyncCoinByTag(CoinBean bean) {
+        pushASyncCoinByTag(bean, new DefaultAsyncXinGePushListener());
     }
 
-    public synchronized JSONObject batchDelTagsSync(String token, String tag) {
+    public void pushASyncCoinByTag(CoinBean bean, AsyncXinGePushListener listener) {
+        MessageIOS messageIOS = createCoinMessageIOS(bean);
+        List<String> tags = createTagByCoinBean(bean);
+        PushMethodInvoker invoker = new PushByTagsInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS, tags, "AND");
+        queue.add(invoker);
+        Message message = createCoinMessage(bean);
+        invoker = new PushByTagsInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, message, tags, "AND");
+        queue.add(invoker);
+    }
+
+    public synchronized JSONObject batchSetTagsSync(String token, String tag, Device device) {
         List<TagTokenPair> pairs = new ArrayList<TagTokenPair>();
         pairs.add(new TagTokenPair(tag, token));
-        BatchDelTagsInvoker invoker = new BatchDelTagsInvoker(ios_xinge, PushMethodInvoker.BATCH_DEL_TAG, null, pairs);
-        return invoker.invoke();
+        return this.batchSetTags(pairs, device);
+    }
+
+    public synchronized JSONObject batchDelTagsSync(String token, String tag, Device device) {
+        List<TagTokenPair> pairs = new ArrayList<TagTokenPair>();
+        pairs.add(new TagTokenPair(tag, token));
+        return this.batchDelTags(pairs, device);
     }
 
     public static void main(String[] args) throws InterruptedException {
@@ -251,7 +470,7 @@ public class XinGePush {
             mess.setTitle("title");
             mess.setContent("content");
             mess.setType(Message.TYPE_NOTIFICATION);
-            mess.setStyle(new Style(0,1,1,0,0));
+            mess.setStyle(new Style(0, 1, 1, 0, 0));
             ClickAction action = new ClickAction();
             action.setActionType(ClickAction.TYPE_URL);
             action.setUrl("http://xg.qq.com");
@@ -281,7 +500,7 @@ public class XinGePush {
             obj.put("aps", aps);
             mess.setRaw(obj.toString());*/
             //System.out.println(obj.toString(4));
-            System.out.println(push.pushAllDevice( mess));
+            System.out.println(push.pushAllDevice(mess));
 
             /*List<String> tags = new ArrayList<String>();
             tags.add("BTC");
