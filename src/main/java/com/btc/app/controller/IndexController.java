@@ -81,7 +81,7 @@ public class IndexController {
             String sort = request.getParameter("sort");
             String desc = request.getParameter("desc");
             if(symbol == null){
-                symbol="BTC";//default
+                symbol="USD";//default
             }
             if(sort == null){
                 sort="volume";
