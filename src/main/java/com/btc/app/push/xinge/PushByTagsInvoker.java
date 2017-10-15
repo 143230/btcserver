@@ -18,8 +18,8 @@ public class PushByTagsInvoker extends PushMethodInvoker {
     public PushByTagsInvoker(XinGePush xinge, int TYPE,
                              AsyncXinGePushListener listener,
                              MessageIOS messageIOS,
-                             List<String> tags, String tagOp) {
-        super(xinge, TYPE, listener);
+                             List<String> tags, String tagOp, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.messageIOS = messageIOS;
         this.tags = tags;
         this.tagOp = tagOp;
@@ -28,8 +28,8 @@ public class PushByTagsInvoker extends PushMethodInvoker {
     public PushByTagsInvoker(XinGePush xinge, int TYPE,
                              AsyncXinGePushListener listener,
                              Message message,
-                             List<String> tags, String tagOp) {
-        super(xinge, TYPE, listener);
+                             List<String> tags, String tagOp, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.message = message;
         this.tags = tags;
         this.tagOp = tagOp;

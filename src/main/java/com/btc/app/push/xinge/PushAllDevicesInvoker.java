@@ -13,15 +13,15 @@ public class PushAllDevicesInvoker extends PushMethodInvoker {
 
     public PushAllDevicesInvoker(XinGePush xinge, int TYPE,
                                  AsyncXinGePushListener listener,
-                                 MessageIOS messageIOS) {
-        super(xinge, TYPE, listener);
+                                 MessageIOS messageIOS, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.messageIOS = messageIOS;
     }
 
     public PushAllDevicesInvoker(XinGePush xinge, int TYPE,
                                  AsyncXinGePushListener listener,
-                                 Message message) {
-        super(xinge, TYPE, listener);
+                                 Message message, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.message = message;
     }
 

@@ -12,8 +12,8 @@ public class BatchDelTagsInvoker extends PushMethodInvoker {
     private final XinGePush.Device device;
     public BatchDelTagsInvoker(XinGePush xinge, int TYPE,
                                AsyncXinGePushListener listener,
-                               List<TagTokenPair> pairs, XinGePush.Device device) {
-        super(xinge, TYPE, listener);
+                               List<TagTokenPair> pairs, XinGePush.Device device, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.pairs = pairs;
         this.device = device;
     }

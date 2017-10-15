@@ -21,12 +21,25 @@ public class XinGePush {
     public static final boolean ANDROID_PUSH_ENABLE = true;
     public static final int current_environment = ENVIRONMENT_PRODUCT;
 //    public static final int current_environment = ENVIRONMENT_TEST;
-public static final boolean IOS_PUSH_ENABLED = true;
+    public static final boolean IOS_PUSH_ENABLED = true;
 
     public static enum Device {
         android,
         ios
     }
+
+//    public static final String COIN_PUSHALL_ANDROID_TAG = "COIN_PUSHALL_ANDROID_MESSAGE_TAG";
+//    public static final String NEWS_PUSHALL_ANDROID_TAG = "NEWS_PUSHALL_ANDROID_MESSAGE_TAG";
+//    public static final String WEIBO_PUSHALL_ANDROID_TAG = "WEIBO_PUSHALL_ANDROID_MESSAGE_TAG";
+
+    public static final String PUSHALL_ANDROID_TAG = "PUSHALL_ANDROID_MESSAGE_TAG";
+    public static final String PUSHALL_IOS_TAG = "PUSHALL_IOS_MESSAGE_TAG";
+//    public static final String COIN_PUSHALL_IOS_TAG = "COIN_PUSHALL_IOS_MESSAGE_TAG";
+//    public static final String NEWS_PUSHALL_IOS_TAG = "NEWS_PUSHALL_IOS_MESSAGE_TAG";
+//    public static final String WEIBO_PUSHALL_IOS_TAG = "WEIBO_PUSHALL_IOS_MESSAGE_TAG";
+    public static final String PUSHTAGS_ANDROID_TAG = "PUSHTAGS_ANDROID_MESSAGE_TAG";
+    public static final String PUSHTAGS_IOS_TAG = "PUSHTAGS_IOS_MESSAGE_TAG";
+    public static final String OTHER_TAG = "OTHER_MESSAGE_TAG";
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -153,6 +166,14 @@ public static final boolean IOS_PUSH_ENABLED = true;
                 ret = null;
         }
         return ret;
+    }
+
+    public JSONObject queryDeviceCount(Device device){
+        if(device == Device.android){
+            return android_xinge.queryDeviceCount();
+        }else{
+            return ios_xinge.queryDeviceCount();
+        }
     }
 
     /*==================华丽分割线，上面都不是我写的~~~====================================================================*/
@@ -357,6 +378,7 @@ public static final boolean IOS_PUSH_ENABLED = true;
             custom.put("rank", bean.getRank());
         }
         mess.setCustom(custom);
+        System.out.println(mess.toJson());
         return mess;
     }
 
@@ -383,10 +405,12 @@ public static final boolean IOS_PUSH_ENABLED = true;
 
     public void pushAsyncWeiboToAll(WeiboBean bean, AsyncXinGePushListener listener) {
         MessageIOS messageIOS = createWeiboMessageIOS(bean);
-        PushMethodInvoker invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.WEIBO_MESSAGE, listener, messageIOS);
+        PushMethodInvoker invoker = new PushAllDevicesInvoker(this,
+                PushMethodInvoker.WEIBO_MESSAGE, listener, messageIOS, PUSHALL_IOS_TAG);
         queue.add(invoker);
         Message message = createWeiboMessage(bean);
-        invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.WEIBO_MESSAGE, listener, message);
+        invoker = new PushAllDevicesInvoker(this,
+                PushMethodInvoker.WEIBO_MESSAGE, listener, message, PUSHALL_ANDROID_TAG);
         queue.add(invoker);
     }
 
@@ -405,10 +429,12 @@ public static final boolean IOS_PUSH_ENABLED = true;
 
     public void pushASyncNewsToAll(NewsBean bean, AsyncXinGePushListener listener) {
         MessageIOS messageIOS = createNewsMessageIOS(bean);
-        PushMethodInvoker invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.NEWS_MESSAGE, listener, messageIOS);
+        PushMethodInvoker invoker = new PushAllDevicesInvoker(
+                this, PushMethodInvoker.NEWS_MESSAGE, listener, messageIOS, PUSHALL_IOS_TAG);
         queue.add(invoker);
         Message message = createNewsMessage(bean);
-        invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.NEWS_MESSAGE, listener, message);
+        invoker = new PushAllDevicesInvoker(
+                this, PushMethodInvoker.NEWS_MESSAGE, listener, message, PUSHALL_ANDROID_TAG);
         queue.add(invoker);
     }
 
@@ -428,10 +454,12 @@ public static final boolean IOS_PUSH_ENABLED = true;
 
     public void pushASyncCoinToAll(CoinBean bean, AsyncXinGePushListener listener) {
         MessageIOS messageIOS = createCoinMessageIOS(bean);
-        PushMethodInvoker invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS);
+        PushMethodInvoker invoker = new PushAllDevicesInvoker(
+                this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS, PUSHALL_IOS_TAG);
         queue.add(invoker);
         Message message = createCoinMessage(bean);
-        invoker = new PushAllDevicesInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, message);
+        invoker = new PushAllDevicesInvoker(
+                this, PushMethodInvoker.COIN_MESSAGE, listener, message, PUSHALL_ANDROID_TAG);
         queue.add(invoker);
     }
 
@@ -442,10 +470,12 @@ public static final boolean IOS_PUSH_ENABLED = true;
     public void pushASyncCoinByTag(CoinBean bean, AsyncXinGePushListener listener) {
         MessageIOS messageIOS = createCoinMessageIOS(bean);
         List<String> tags = createTagByCoinBean(bean);
-        PushMethodInvoker invoker = new PushByTagsInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS, tags, "AND");
+        PushMethodInvoker invoker = new PushByTagsInvoker(
+                this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS, tags, "AND", PUSHTAGS_IOS_TAG);
         queue.add(invoker);
         Message message = createCoinMessage(bean);
-        invoker = new PushByTagsInvoker(this, PushMethodInvoker.COIN_MESSAGE, listener, message, tags, "AND");
+        invoker = new PushByTagsInvoker(
+                this, PushMethodInvoker.COIN_MESSAGE, listener, message, tags, "AND", PUSHALL_ANDROID_TAG);
         queue.add(invoker);
     }
 
@@ -461,22 +491,32 @@ public static final boolean IOS_PUSH_ENABLED = true;
         return this.batchDelTags(pairs, device);
     }
 
+    public synchronized JSONObject pushSingleDevice(String token, CoinBean bean, Device device){
+        if(device == Device.android) {
+            Message message = createCoinMessage(bean);
+            return this.pushSingleDevice(token, message);
+        }else{
+            MessageIOS messageIOS = createCoinMessageIOS(bean);
+            return this.pushSingleDevice(token, messageIOS);
+        }
+    }
+
     public static void main(String[] args) throws InterruptedException {
-        System.out.println(XingeApp.pushAllAndroid(ANDROID_ACCESS_ID, ANDROID_SECRET_KEY, "标题", "大家好!"));
+//        System.out.println(XingeApp.pushAllAndroid(ANDROID_ACCESS_ID, ANDROID_SECRET_KEY, "标题", "大家好!"));
         XinGePush push = XinGePush.getInstance();
         for (int i = 0; i < 1; i++) {
             Message mess = new Message();
 
             mess.setExpireTime(86400);
-            mess.setTitle("title");
+            mess.setTitle("推送测试");
             mess.setContent("content");
-            mess.setType(Message.TYPE_NOTIFICATION);
+            mess.setType(Message.TYPE_NOTIFICATION);/*
             mess.setStyle(new Style(0, 1, 1, 0, 0));
             ClickAction action = new ClickAction();
             action.setActionType(ClickAction.TYPE_URL);
             action.setUrl("http://xg.qq.com");
             action.setConfirmOnUrl(1);
-            mess.setAction(action);
+            mess.setAction(action);*/
 
             /*mess.setExpireTime(86400);
             JSONObject obj = new JSONObject();
@@ -501,6 +541,7 @@ public static final boolean IOS_PUSH_ENABLED = true;
             obj.put("aps", aps);
             mess.setRaw(obj.toString());*/
             //System.out.println(obj.toString(4));
+            System.out.println(mess);
             System.out.println(push.pushAllDevice(mess));
 
             /*List<String> tags = new ArrayList<String>();

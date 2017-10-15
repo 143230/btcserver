@@ -16,16 +16,16 @@ public class PushByTokenInvoker extends PushMethodInvoker {
 
     public PushByTokenInvoker(XinGePush xinge, int TYPE,
                               AsyncXinGePushListener listener,
-                              MessageIOS messageIOS, String token) {
-        super(xinge, TYPE, listener);
+                              MessageIOS messageIOS, String token, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.messageIOS = messageIOS;
         this.token = token;
     }
 
     public PushByTokenInvoker(XinGePush xinge, int TYPE,
                               AsyncXinGePushListener listener,
-                              Message message, String token) {
-        super(xinge, TYPE, listener);
+                              Message message, String token, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.message = message;
         this.token = token;
     }

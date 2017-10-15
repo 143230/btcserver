@@ -15,8 +15,11 @@ public abstract class PushMethodInvoker implements Comparable<PushMethodInvoker>
     public static final int BATCH_SET_TAG = 3;
     public static final int BATCH_DEL_TAG = 4;
 
-    public PushMethodInvoker(XinGePush xinge, int TYPE, AsyncXinGePushListener listener) {
+    private final String messageTag;
+
+    public PushMethodInvoker(XinGePush xinge, int TYPE, AsyncXinGePushListener listener, String messageTag) {
         this.xinge = xinge;
+        this.messageTag = messageTag;
         this.TYPE = TYPE;
         this.listener = listener;
         this.createTime = System.currentTimeMillis();
@@ -44,4 +47,8 @@ public abstract class PushMethodInvoker implements Comparable<PushMethodInvoker>
     }
 
     public abstract JSONObject invoke();
+
+    public String getMessageTag() {
+        return messageTag;
+    }
 }

@@ -13,8 +13,8 @@ public class BatchSetTagsInvoker extends PushMethodInvoker {
     private final List<TagTokenPair> pairs;
     public BatchSetTagsInvoker(XinGePush xinge, int TYPE,
                                AsyncXinGePushListener listener,
-                               List<TagTokenPair> pairs, XinGePush.Device device) {
-        super(xinge, TYPE, listener);
+                               List<TagTokenPair> pairs, XinGePush.Device device, String messageTag) {
+        super(xinge, TYPE, listener, messageTag);
         this.pairs = pairs;
         this.device = device;
     }
