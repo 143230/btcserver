@@ -125,7 +125,7 @@ public class IndexController {
         return str;
     }
 
-    @RequestMapping(value = "/coinInfo/select/", produces = "application/json; charset=utf-8")
+    @RequestMapping(value = "/coinInfo/select", produces = "application/json; charset=utf-8")
     public @ResponseBody
     String getSelectCoinInfo(HttpServletRequest request) {
         List<CoinBean> coinBeanList = null;

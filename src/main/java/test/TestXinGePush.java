@@ -79,6 +79,13 @@ public class TestXinGePush {
     }
 
     @Test
+    public void testAddTag(){
+        JSONObject obj = push.batchSetTagsSync("","bitcoin", XinGePush.Device.ios);
+        System.out.println(obj.toString(4));
+        assert obj.getInt("ret_code") == 0;
+    }
+
+    @Test
     public void testPushNewMessage(){
         push.pushASyncNewsToAll(newsBean);
     }

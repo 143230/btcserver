@@ -473,11 +473,11 @@ public class XinGePush {
         MessageIOS messageIOS = createCoinMessageIOS(bean);
         List<String> tags = createTagByCoinBean(bean);
         PushMethodInvoker invoker = new PushByTagsInvoker(
-                this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS, tags, "AND", PUSHTAGS_IOS_TAG);
+                this, PushMethodInvoker.COIN_MESSAGE, listener, messageIOS, tags, "OR", PUSHTAGS_IOS_TAG);
         queue.add(invoker);
         Message message = createCoinMessage(bean);
         invoker = new PushByTagsInvoker(
-                this, PushMethodInvoker.COIN_MESSAGE, listener, message, tags, "AND", PUSHALL_ANDROID_TAG);
+                this, PushMethodInvoker.COIN_MESSAGE, listener, message, tags, "OR", PUSHALL_ANDROID_TAG);
         queue.add(invoker);
     }
 
