@@ -32,7 +32,7 @@ public class TokenActionController {
 
 
 
-    @RequestMapping(value = "/registertoken", produces = "application/json; charset=utf-8")
+    /*@RequestMapping(value = "/registertoken", produces = "application/json; charset=utf-8")
     public @ResponseBody String registerToken(HttpServletRequest request) {
         JSONObject json = new JSONObject();
         String token = request.getParameter("token");
@@ -91,7 +91,7 @@ public class TokenActionController {
             json.put("code", 2);
         }
         return json.toJSONString();
-    }
+    }*/
 
     @RequestMapping(value = "/addtag", produces = "application/json; charset=utf-8")
     public @ResponseBody String addTagForToken(HttpServletRequest request) {
@@ -113,12 +113,12 @@ public class TokenActionController {
             userBean = userService.searchUser(account);
             uid = userBean == null ? 0 :userBean.getId();
         }
-        PhoneBean bean = phoneService.searchPhone(pid,uid);
+        /*PhoneBean bean = phoneService.searchPhone(pid,uid);
         if(bean == null){
             json.put("status", "error");
             json.put("message", "please register first.");
             json.put("code", -2);
-        }
+        }*/
         org.json.JSONObject ret_json;
         if(device.equalsIgnoreCase("ios")){
             ret_json = push.batchSetTagsSync(token,tagname, XinGePush.Device.ios);
@@ -167,12 +167,12 @@ public class TokenActionController {
             userBean = userService.searchUser(account);
             uid = userBean == null ? 0 :userBean.getId();
         }
-        PhoneBean bean = phoneService.searchPhone(pid,uid);
+        /*PhoneBean bean = phoneService.searchPhone(pid,uid);
         if(bean == null){
             json.put("status", "error");
             json.put("message", "please register first.");
             json.put("code", -2);
-        }
+        }*/
         org.json.JSONObject ret_json;
         if(device.equalsIgnoreCase("ios")){
             ret_json = push.batchDelTagsSync(token,tagname, XinGePush.Device.ios);
