@@ -343,6 +343,7 @@ public class XinGePush {
         if (bean.getRank() > 0) {
             alert.put("rank", bean.getRank());
         }
+        alert.put("url", bean.getUrl());
         aps.put("sound", "beep.wav");
         aps.put("alert", alert);
         aps.put("badge", 1);
@@ -377,6 +378,7 @@ public class XinGePush {
         if (bean.getRank() > 0) {
             custom.put("rank", bean.getRank());
         }
+        custom.put("url", bean.getUrl());
         mess.setCustom(custom);
         System.out.println(mess.toJson());
         return mess;

@@ -53,7 +53,7 @@ public class SchedulerThread extends Thread {
 //                  executor.execute(new OkCoinHtmlUnitSpiderService(coinService,newsService, OkCoinHtmlUnitSpiderService.OKCOIN_CNY_URL));
 //                  System.out.println(executor.getActiveCount());
 //                }
-                if (i % 60 == 0) {
+                if (i % 300 == 0) {
                     /*for (int j = 1; j < 13; j++) {
                         String url = String.format("http://www.feixiaohao.com/list_%s.html#CNY", j);
                         executor.execute(new FeiXiaoHaoHtmlUnitSpiderService(coinService, url));
