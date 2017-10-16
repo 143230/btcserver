@@ -24,7 +24,6 @@ public class WeiboServiceImpl implements WeiboService {
     private Map<String,WeiboBean> weiboBeanMap = new WeakHashMap<String, WeiboBean>();
     private AtomicInteger weiboNumber = new AtomicInteger();
     private XinGePush xgpush = XinGePush.getInstance();
-    private WeiXinPush wxpush = WeiXinPush.getInstance();
 
     public int insertWeiboInfo(WeiboBean bean) {
         return weiboDao.insert(bean);
@@ -59,7 +58,6 @@ public class WeiboServiceImpl implements WeiboService {
                 //插入数据库并推送
                 weiboDao.insert(bean);
                 xgpush.pushAsyncWeiboToAll(bean);
-                wxpush.pushAsyncWeiboToAll(bean);
                 return true;
             }
             return false;

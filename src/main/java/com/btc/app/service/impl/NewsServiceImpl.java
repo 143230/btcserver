@@ -25,7 +25,6 @@ public class NewsServiceImpl implements NewsService {
     private Map<String, NewsBean> newsBeanMap = new HashMap<String, NewsBean>();
     private AtomicInteger newsNumber = new AtomicInteger();
     private XinGePush xgpush = XinGePush.getInstance();
-    private WeiXinPush wxpush = WeiXinPush.getInstance();
 
     public int insertCoinInfo(NewsBean bean) {
         return newsDao.insert(bean);
@@ -86,7 +85,6 @@ public class NewsServiceImpl implements NewsService {
                 num++;
                 newsDao.insert(bean);
                 xgpush.pushASyncNewsToAll(bean);
-                wxpush.pushASyncNewsToAll(bean);
                 newsBeanMap.put(bean.getUrl(), bean);
             }
         }

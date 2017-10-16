@@ -85,6 +85,7 @@ public class CoinServiceImpl implements CoinService {
             String symbol = bean.getEnglishname().toUpperCase();
 //            BigDecimal rise;
             BigDecimal percent = bean.getPercent();
+            BigDecimal oldpercent = null;
             if (percent == null) continue;
             mergeCoinInfo(bean);
             Map<CoinBean, CoinBean> map;
@@ -93,20 +94,20 @@ public class CoinServiceImpl implements CoinService {
                 if (coinMarketMap.get(market).containsKey(bean)) {
                     CoinBean oldBean = map.remove(bean);
                     if (oldBean == null) continue;
-                    BigDecimal oldpercent = oldBean.getPercent();
+                    oldpercent = oldBean.getPercent();
                     if (oldpercent != null && percent.subtract(oldpercent).abs().compareTo(new BigDecimal(5)) < 0) {
                         map.put(bean, bean);
                         coinMarketMap.put(market, map);
                         continue;
                     }
-                    logger.info("前端接收Bean：" + bean + "\t原涨跌幅：" + oldpercent);
+//                    logger.info("前端接收Bean：" + bean + "\t原涨跌幅：" + oldpercent);
 //                rise = percent.subtract(oldpercent);
-                } else {
+                }/* else {
                     logger.info("前端接收新Bean：" + bean + "\t当日首次数据");
-                }
+                }*/
             } else {
 //                rise = percent;
-                logger.info("前端接收新Bean：" + bean + "\t当日首次数据");
+//                logger.info("前端接收新Bean：" + bean + "\t当日首次数据");
                 map = new ConcurrentHashMap<CoinBean, CoinBean>();
             }
             //插入数据库并推送到前端
@@ -114,9 +115,9 @@ public class CoinServiceImpl implements CoinService {
             coinMarketMap.put(market, map);
             insertCoinInfo(bean);
 
-            if (bean.getRank() <= 50 && bean.getMarket_type() == 32) {
-                xgpush.pushASyncCoinToAll(bean);
-//              wxpush.pushASyncCoinToAll(bean);
+            if (bean.getRank() <= 50 && bean.getMarket_type() == 33) {
+                logger.info("Bean：" + bean + "\t原涨跌幅：" + oldpercent);
+                xgpush.pushASyncCoinByTag(bean);
             }
 
             logger.debug("Coin Map Size:" + map.size());
