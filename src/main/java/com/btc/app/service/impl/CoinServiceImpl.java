@@ -224,6 +224,30 @@ public class CoinServiceImpl implements CoinService {
         return coinBeans.subList(start, count + start);
     }
 
+    public List<CoinBean> getCoinInfoByIds(Set<String> ids, String symbol) {
+        List<CoinBean> coinBeans = getTodayCoinInfo(symbol);
+        List<CoinBean> beanList = new ArrayList<CoinBean>();
+        for(CoinBean bean:coinBeans){
+            String id = bean.getCoin_id();
+            if(ids.contains(id)){
+                beanList.add(bean);
+            }
+        }
+        return beanList;
+    }
+
+    public CoinBean getCoinInfoById(String target_id, String symbol) {
+        List<CoinBean> coinBeans = getTodayCoinInfo(symbol);
+        CoinBean ret_bean = null;
+        for(CoinBean bean:coinBeans){
+            String id = bean.getCoin_id();
+            if(target_id.equals(id)){
+                ret_bean = bean;
+            }
+        }
+        return ret_bean;
+    }
+
     public int getCoinInfo() {
         return coinNumber.getAndSet(0);
     }

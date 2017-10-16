@@ -16,6 +16,7 @@ import com.btc.app.service.WeiboService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -80,13 +81,13 @@ public class IndexController {
             String symbol = request.getParameter("symbol");
             String sort = request.getParameter("sort");
             String desc = request.getParameter("desc");
-            if(symbol == null){
-                symbol="USD";//default
+            if (symbol == null) {
+                symbol = "USD";//default
             }
-            if(sort == null){
-                sort="volume";
+            if (sort == null) {
+                sort = "volume";
             }
-            if(desc == null){
+            if (desc == null) {
                 desc = "true";
             }
             if (start < 0) {
@@ -95,16 +96,32 @@ public class IndexController {
             if (count > MAX_RET_COUNT) {
                 count = MAX_RET_COUNT;
             }
-            if(sort.equalsIgnoreCase("volume")) {
+            if (sort.equalsIgnoreCase("volume")) {
                 coinBeanList = coinService.getCoinInfoByRank(symbol.toUpperCase(), start, count, desc);
-            }else{
-                coinBeanList = coinService.getCoinInfoByPercent(symbol.toUpperCase(),start,count, desc);
+            } else {
+                coinBeanList = coinService.getCoinInfoByPercent(symbol.toUpperCase(), start, count, desc);
             }
         } catch (Exception e) {
             logger.info(e.getMessage());
 //            coinBeanList = coinService.getCoinInfoByRank("BTC",0,20);
         }
         String str = JSON.toJSONString(coinBeanList, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        return str;
+    }
+
+    @RequestMapping(value = "/coinInfo/{symbol}/{coinid}", produces = "application/json; charset=utf-8")
+    public @ResponseBody String getSelectCoinInfo(@PathVariable("symbol") String symbol,
+                                                  @PathVariable("coinid") String coinid) {
+        CoinBean bean = null;
+        try {
+            if (symbol == null) {
+                symbol = "USD";//default
+            }
+            bean = coinService.getCoinInfoById(coinid, symbol.toUpperCase());
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        String str = JSON.toJSONString(bean, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
         return str;
     }
 
@@ -127,7 +144,7 @@ public class IndexController {
             logger.info(e.getMessage());
             newsBeanList = newsService.getLatestNewsInfo(10);
         }
-        String str = JSON.toJSONString(newsBeanList,SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        String str = JSON.toJSONString(newsBeanList, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
         return str;
     }
 
@@ -150,7 +167,7 @@ public class IndexController {
             logger.info(e.getMessage());
             weiboBeanList = weiboService.getLatestWeiboInfo(10);
         }
-        String str = JSON.toJSONString(weiboBeanList,SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        String str = JSON.toJSONString(weiboBeanList, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
         return str;
     }
 }
