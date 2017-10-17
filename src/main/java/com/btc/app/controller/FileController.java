@@ -18,7 +18,7 @@ public class FileController {
     @RequestMapping("/{fileName}.apk")
     public void download(HttpServletResponse response, @PathVariable("fileName") String fileName) throws Exception {
         System.out.println(fileName);
-        String filePath = "/root/files/" + fileName + ".apk";
+        String filePath = "/root/tomcat_files/" + fileName + ".apk";
         File file = new File(filePath);
         if (file.exists()) {
             //重置response
