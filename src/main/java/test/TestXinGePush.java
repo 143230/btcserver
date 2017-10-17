@@ -86,6 +86,16 @@ public class TestXinGePush {
     }
 
     @Test
+    public void testQueryTags(){
+        JSONObject obj = push.queryTags(XinGePush.Device.android);
+        System.out.println(obj.toString(4));
+        assert obj.getInt("ret_code") == 0;
+        obj = push.queryTags(XinGePush.Device.ios);
+        System.out.println(obj.toString(4));
+        assert obj.getInt("ret_code") == 0;
+    }
+
+    @Test
     public void testPushNewMessage(){
         push.pushASyncNewsToAll(newsBean);
     }

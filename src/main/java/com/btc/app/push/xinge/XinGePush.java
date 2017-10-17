@@ -176,6 +176,14 @@ public class XinGePush {
         }
     }
 
+    public JSONObject queryTags(Device device){
+        if(device == Device.android){
+            return android_xinge.queryTags(0, 1000);
+        }else{
+            return ios_xinge.queryTags(0, 1000);
+        }
+    }
+
     /*==================华丽分割线，上面都不是我写的~~~====================================================================*/
 
     private MessageIOS createWeiboMessageIOS(WeiboBean bean) {

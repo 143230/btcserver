@@ -10,6 +10,8 @@ import com.btc.app.spider.htmlunit.inter.CoinHumlUnitSpider;
 import com.btc.app.spider.phantomjs.JubiSpider;
 import com.btc.app.util.MarketTypeMapper;
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
