@@ -22,7 +22,7 @@ public class FileController {
         File file = new File(filePath);
         if (file.exists()) {
             //重置response
-            response.reset();
+//            response.reset();
             response.setCharacterEncoding("utf-8");
             response.setContentType("application/vnd.android.package-archive");
             //设置http头信息的内容
