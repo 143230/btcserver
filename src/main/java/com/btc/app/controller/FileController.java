@@ -24,7 +24,7 @@ public class FileController {
             //重置response
             response.reset();
             response.setCharacterEncoding("utf-8");
-            response.setContentType("text/html;charset=utf-8");
+            response.setContentType("application/vnd.android.package-archive");
             //设置http头信息的内容
             response.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             //解决中文文件名显示问题
