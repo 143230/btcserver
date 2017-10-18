@@ -1,8 +1,9 @@
-package com.btc.app.spider.htmlunit;
+package com.btc.app.spider.http;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.btc.app.bean.WeiboBean;
+import com.btc.app.spider.htmlunit.HtmlUnitBasicSpider;
 import com.btc.app.spider.htmlunit.inter.BlogHtmlUnitSpider;
 import com.btc.app.util.EmojiMapper;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
@@ -13,7 +14,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
@@ -26,24 +26,22 @@ import java.util.List;
 /**
  * Created by cuixuan on 2017/8/23.
  */
-public class WeiboHtmlUnitSpider extends HtmlUnitBasicSpider implements BlogHtmlUnitSpider {
+public class WeiboHttpSpider extends HttpBasicSpider implements BlogHtmlUnitSpider {
     private String weiboId;
     private List<WeiboBean> weiboBeans;
-    private JSONObject cardListJson = null;
-    private JSONObject userInfoJson = null;
 
-    public WeiboHtmlUnitSpider(String wbid, BrowserVersion version) throws InterruptedException {
-        super(wbid, version);
-        this.weiboId = wbid;
-        this.url = String.format("https://m.weibo.cn/u/%s?uid=%s", weiboId, weiboId);
+    public WeiboHttpSpider(String weiboId) throws InterruptedException, MalformedURLException {
+        super(String.format("https://m.weibo.cn/api/container/getIndex?" +
+                        "uid=%s&type=uid&value=%s&containerid=107603%s",
+                weiboId, weiboId, weiboId));
+        this.weiboId = weiboId;
     }
 
 
-    @Override
     public void parseHtml() throws Exception {
-        if (!this.finished) throw new Exception("The Page of: " + url + " has not load Finished.");
-        //logger.info("The Page of: "+url+" has start to parse.");
         weiboBeans = new ArrayList<WeiboBean>();
+        String content = openAndGetContent();
+        JSONObject  cardListJson = JSONObject.parseObject(content);
         JSONArray array = cardListJson.getJSONArray("cards");
         for (int i = 0; i < array.size(); i++) {
             JSONObject object = array.getJSONObject(i);
@@ -77,26 +75,7 @@ public class WeiboHtmlUnitSpider extends HtmlUnitBasicSpider implements BlogHtml
             bean.setWbname(screen_name);
             bean.setFrom_web("WEIBO");
             weiboBeans.add(bean);
-//            System.out.println(bean);
-        }
-    }
-
-    public void downloadFile(WebRequest request, WebResponse response) {
-        String url = request.getUrl().toString();
-
-        int status_code = response.getStatusCode();
-        if (url.startsWith("https://m.weibo.cn/api/container/getIndex?")) {
-            logger.info("下载文件：" + url + "\tStatus_Code: " + status_code);
-            String content = response.getContentAsString();
-            JSONObject json = JSONObject.parseObject(content);
-            if (json.containsKey("cardlistInfo")) {
-                cardListJson = json;
-            } else if (json.containsKey("userInfo")) {
-                userInfoJson = json;
-            }
-        }
-        if (cardListJson != null && userInfoJson != null) {
-            this.setFinished(true);
+            System.out.println(bean);
         }
     }
 
@@ -169,10 +148,13 @@ public class WeiboHtmlUnitSpider extends HtmlUnitBasicSpider implements BlogHtml
             cleanHtmlTag(line);
         }
         reader.close();*/
-        WeiboHtmlUnitSpider spider = new WeiboHtmlUnitSpider("1839109034", BrowserVersion.INTERNET_EXPLORER);
+        WeiboHttpSpider spider = new WeiboHttpSpider("1839109034");
         //spider.setJavaScriptEnabled(false);
-        spider.openAndWait();
-        spider.parseHtml();
-        spider.release();
+        try {
+            spider.parseHtml();
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

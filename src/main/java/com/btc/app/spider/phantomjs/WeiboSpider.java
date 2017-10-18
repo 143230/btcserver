@@ -102,7 +102,6 @@ public class WeiboSpider extends BasicSpider {
             spider.openAndWait();
             spider.parseHtml(10);
             driver.close();
-            driver.get("file:///Users/cuixuan");
             System.out.println(driver.getPageSource());
         }catch (Exception e){
             e.printStackTrace();
