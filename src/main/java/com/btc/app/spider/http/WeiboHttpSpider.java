@@ -75,7 +75,7 @@ public class WeiboHttpSpider extends HttpBasicSpider implements BlogHtmlUnitSpid
             bean.setWbname(screen_name);
             bean.setFrom_web("WEIBO");
             weiboBeans.add(bean);
-            System.out.println(bean);
+//            System.out.println(bean);
         }
     }
 

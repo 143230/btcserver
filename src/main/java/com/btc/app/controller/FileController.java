@@ -24,11 +24,11 @@ public class FileController {
             //重置response
 //            response.reset();
             response.setCharacterEncoding("utf-8");
-            response.setContentType("application/vnd.android.package-archive");
+            response.setContentType("application/octet-stream");
             //设置http头信息的内容
 //            response.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             //解决中文文件名显示问题
-            response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String(filePath.getBytes("gb2312"), "ISO8859-1"));
             //设置文件长度
             int fileLength = (int) file.length();
             response.setContentLength(fileLength);
