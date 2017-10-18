@@ -13,10 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,9 +81,9 @@ public class WeiboHtmlUnitSpider extends HtmlUnitBasicSpider implements BlogHtml
 
     public void downloadFile(WebRequest request, WebResponse response) {
         String url = request.getUrl().toString();
-        //int status_code = response.getStatusCode();
+        int status_code = response.getStatusCode();
         if(url.startsWith("https://m.weibo.cn/api/container/getIndex?")){
-            //logger.info("下载文件："+url+"\tStatus_Code: "+status_code);
+            logger.info("下载文件："+url+"\tStatus_Code: "+status_code);
             String content = response.getContentAsString();
             JSONObject json = JSONObject.parseObject(content);
             if(json.containsKey("cardlistInfo")){

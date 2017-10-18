@@ -20,13 +20,13 @@ public class FileController {
         System.out.println(fileName);
         String filePath = "/root/tomcat_files/" + fileName + ".apk";
         File file = new File(filePath);
-        if (file.exists()) {
+        if (file.exists() && file.isFile()) {
             //重置response
 //            response.reset();
             response.setCharacterEncoding("utf-8");
-            response.setContentType("application/vnd.android.package-archive");
+            response.setContentType("application/octet-stream");
             //设置http头信息的内容
-            response.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+//            response.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             //解决中文文件名显示问题
             response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("gb2312"), "ISO8859-1"));
             //设置文件长度
@@ -57,7 +57,7 @@ public class FileController {
         } else {
             response.setContentType("text/html;charset=utf-8");
             PrintWriter out = response.getWriter();
-            out.println("file \"" + fileName + "\" not exist.");
+            out.println("file \"" + fileName + ".apk\" not exist.");
             out.close();
         }
     }
