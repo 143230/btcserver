@@ -30,10 +30,10 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 public class SystemStatisticsController {
+    private static final SystemStatistics statistics = SystemStatistics.getInstance();
 
     @RequestMapping("/statistics")
     public @ResponseBody String getStat(HttpServletRequest request){
-        SystemStatistics statistics = SystemStatistics.getInstance();
         Map<String,Integer> map = statistics.getAll();
         JSONObject object = new JSONObject();
         for(String key:map.keySet()){

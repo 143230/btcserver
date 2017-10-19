@@ -354,6 +354,7 @@ public class XinGePush {
         alert.put("url", bean.getUrl());
         aps.put("sound", "beep.wav");
         aps.put("alert", alert);
+        mess.setAlert(alert);
         aps.put("badge", 1);
         //aps.put("content-available", 1);
         obj.put("aps", aps);

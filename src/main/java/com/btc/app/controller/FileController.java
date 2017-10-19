@@ -1,19 +1,25 @@
 package com.btc.app.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.btc.app.statistics.SystemStatistics;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.*;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/file/")
 public class FileController {
+    private static final SystemStatistics statistics = SystemStatistics.getInstance();
+    private String android_version;
+    private String ios_version;
 
     @RequestMapping("/{fileName}.apk")
     public void download(HttpServletResponse response, @PathVariable("fileName") String fileName) throws Exception {
@@ -28,7 +34,7 @@ public class FileController {
             //设置http头信息的内容
 //            response.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
             //解决中文文件名显示问题
-            response.addHeader("Content-Disposition", "attachment;filename=" + new String(filePath.getBytes("gb2312"), "ISO8859-1"));
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String((fileName+".apk").getBytes("gb2312"), "ISO8859-1"));
             //设置文件长度
             int fileLength = (int) file.length();
             response.setContentLength(fileLength);
@@ -53,6 +59,7 @@ public class FileController {
 
                 //关闭输出流
                 servletOS.close();
+                statistics.add("download", 1);
             }
         } else {
             response.setContentType("text/html;charset=utf-8");
@@ -61,4 +68,39 @@ public class FileController {
             out.close();
         }
     }
+
+    @RequestMapping(value = "/version", produces = "application/json; charset=utf-8")
+    public String getVersion(HttpServletRequest request) throws Exception {
+        String device = request.getParameter("device");
+        JSONObject json = new JSONObject();
+        versionCheck();
+        if(device == null){
+            json.put("status", "error");
+            json.put("message", "parameter of device needed");
+            json.put("code", -1);
+        }else if(device.equalsIgnoreCase("ios")){
+            json.put("status", "success");
+            json.put("message", ios_version);
+            json.put("code", 0);
+        }else if(device.equalsIgnoreCase("android")){
+            json.put("status", "success");
+            json.put("message", android_version);
+            json.put("code", 0);
+        }else{
+            json.put("status", "error");
+            json.put("message", "parameter of device not found");
+            json.put("code", -2);
+        }
+        return json.toJSONString();
+    }
+
+    private void versionCheck() throws IOException {
+        final String filepath = "/root/tomcat_files/version.conf";
+        Properties prop = new Properties();
+        InputStream in = getClass().getResourceAsStream(filepath);
+        prop.load(in);
+        ios_version = prop.getProperty("ios_version");
+        android_version = prop.getProperty("android_version");
+    }
+
 }
