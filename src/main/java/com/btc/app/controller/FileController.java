@@ -78,7 +78,6 @@ public class FileController {
         if(device == null){
             json.put("status", "error");
             json.put("message", "parameter of device needed");
-            json.put("download_url", "https://fengzhihen.com/btcapp/file/bidongjingling.apk");
             json.put("code", -1);
         }else if(device.equalsIgnoreCase("ios")){
             json.put("status", "success");
@@ -88,6 +87,7 @@ public class FileController {
         }else if(device.equalsIgnoreCase("android")){
             json.put("status", "success");
             json.put("message", android_version);
+            json.put("download_url", "https://fengzhihen.com/btcapp/file/bidongjingling.apk");
             json.put("code", 0);
         }else{
             json.put("status", "error");
