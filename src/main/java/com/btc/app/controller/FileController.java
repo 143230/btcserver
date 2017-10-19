@@ -5,6 +5,7 @@ import com.btc.app.statistics.SystemStatistics;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +71,7 @@ public class FileController {
     }
 
     @RequestMapping(value = "/version", produces = "application/json; charset=utf-8")
-    public String getVersion(HttpServletRequest request) throws Exception {
+    public @ResponseBody String getVersion(HttpServletRequest request) throws Exception {
         String device = request.getParameter("device");
         JSONObject json = new JSONObject();
         versionCheck();
