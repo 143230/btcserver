@@ -97,8 +97,7 @@ public class FileController {
     private void versionCheck() throws IOException {
         final String filepath = "/root/tomcat_files/version.conf";
         Properties prop = new Properties();
-        InputStream in = getClass().getResourceAsStream(filepath);
-        prop.load(in);
+        prop.load(new FileInputStream(filepath));
         ios_version = prop.getProperty("ios_version");
         android_version = prop.getProperty("android_version");
     }
