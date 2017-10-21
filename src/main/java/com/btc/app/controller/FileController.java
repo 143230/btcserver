@@ -2,6 +2,7 @@ package com.btc.app.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.btc.app.statistics.SystemStatistics;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,17 +15,22 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/file/")
 public class FileController {
     private static final SystemStatistics statistics = SystemStatistics.getInstance();
+
+    private static final Logger logger = Logger.getLogger("FileController");
     private String android_version;
     private String ios_version;
+    private String ios_version_desc;
+    private String android_version_desc;
 
     @RequestMapping("/{fileName}.apk")
-    public void download(HttpServletResponse response, @PathVariable("fileName") String fileName) throws Exception {
-        System.out.println(fileName);
+    public void download(HttpServletResponse response, HttpServletRequest request, @PathVariable("fileName") String fileName) throws Exception {
+
         String filePath = "/root/tomcat_files/" + fileName + ".apk";
         File file = new File(filePath);
         if (file.exists() && file.isFile()) {
@@ -60,6 +66,7 @@ public class FileController {
 
                 //关闭输出流
                 servletOS.close();
+                logger.info(String.format("apk downloaded %s", getIpAddr(request)));
                 statistics.add("download", 1);
             }
         } else {
@@ -82,11 +89,13 @@ public class FileController {
         }else if(device.equalsIgnoreCase("ios")){
             json.put("status", "success");
             json.put("message", ios_version);
+            json.put("desc", ios_version_desc);
             json.put("download_url", "itms-apps://itunes.apple.com/cn/app/jie-zou-da-shi/id493901993?mt=8");
             json.put("code", 0);
         }else if(device.equalsIgnoreCase("android")){
             json.put("status", "success");
             json.put("message", android_version);
+            json.put("desc", android_version_desc);
             json.put("download_url", "https://fengzhihen.com/btcapp/file/bidongjingling.apk");
             json.put("code", 0);
         }else{
@@ -102,7 +111,39 @@ public class FileController {
         Properties prop = new Properties();
         prop.load(new FileInputStream(filepath));
         ios_version = prop.getProperty("ios_version");
+        ios_version_desc = prop.getProperty("ios_version_desc");
         android_version = prop.getProperty("android_version");
+        android_version_desc = prop.getProperty("android_version_desc");
+    }
+
+    /**
+     * 获取访问者IP
+     *
+     * 在一般情况下使用Request.getRemoteAddr()即可，但是经过nginx等反向代理软件后，这个方法会失效。
+     *
+     * 本方法先从Header中获取X-Real-IP，如果不存在再从X-Forwarded-For获得第一个IP(用,分割)，
+     * 如果还不存在则调用Request .getRemoteAddr()。
+     *
+     * @param request
+     * @return
+     */
+    public static String getIpAddr(HttpServletRequest request) throws Exception{
+        String ip = request.getHeader("X-Real-IP");
+        if (!StringUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
+            return ip;
+        }
+        ip = request.getHeader("X-Forwarded-For");
+        if (!StringUtils.isBlank(ip) && !"unknown".equalsIgnoreCase(ip)) {
+// 多次反向代理后会有多个IP值，第一个为真实IP。
+            int index = ip.indexOf(',');
+            if (index != -1) {
+                return ip.substring(0, index);
+            } else {
+                return ip;
+            }
+        } else {
+            return request.getRemoteAddr();
+        }
     }
 
 }

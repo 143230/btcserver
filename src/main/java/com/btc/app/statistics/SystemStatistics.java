@@ -33,7 +33,7 @@ public class SystemStatistics {
         synchronized (statMap){
             Integer val = statMap.get(key);
             if(val == null){
-                statMap.put(key,0);
+                statMap.put(key,value);
             }else{
                 statMap.put(key,val+value);
             }
