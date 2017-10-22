@@ -109,11 +109,12 @@ public class FileController {
     private void versionCheck() throws IOException {
         final String filepath = "/root/tomcat_files/version.conf";
         Properties prop = new Properties();
-        prop.load(new FileInputStream(filepath));
+        prop.load(new FileInputStream(filepath);
         ios_version = prop.getProperty("ios_version");
-        ios_version_desc = prop.getProperty("ios_version_desc");
+        //new String(props.getProperty(key).getBytes("ISO8859-1"), encode);
+        ios_version_desc = new String(prop.getProperty("ios_version_desc").getBytes("ISO8859-1"), "UTF-8");
         android_version = prop.getProperty("android_version");
-        android_version_desc = prop.getProperty("android_version_desc");
+        android_version_desc = new String(prop.getProperty("android_version_desc").getBytes("ISO8859-1"), "UTF-8");
     }
 
     /**
