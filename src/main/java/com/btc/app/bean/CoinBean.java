@@ -188,7 +188,16 @@ public class CoinBean {
 
     }
 
+    public String getTypeStr(){
+        return this.marketType();
+    }
+
     public String marketType(){
+        if(this.market_type >= 64){
+            int mfrom = market_type>>6;
+            int mto = market_type % 64;
+            return getMarketNameType(mfrom)+"/"+getMarketNameType(mto);
+        }
         return getMarketNameType(this.market_type);
     }
 

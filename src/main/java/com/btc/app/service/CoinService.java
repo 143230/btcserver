@@ -2,6 +2,7 @@ package com.btc.app.service;
 
 
 import com.btc.app.bean.CoinBean;
+import com.btc.app.bean.CoinInfoBean;
 import com.btc.app.spider.htmlunit.inter.CoinHumlUnitSpider;
 import com.btc.app.spider.phantomjs.JubiSpider;
 
@@ -9,9 +10,11 @@ import java.util.List;
 import java.util.Set;
 
 public interface CoinService {
-    int insertCoinInfo(CoinBean bean);
-
     CoinBean testConnection();
+
+    int insertCoinInfo(CoinInfoBean bean);
+    int insertCoin(CoinBean bean);
+    List<CoinBean> getCoinById(String coinid);
 
     void handleResult(JubiSpider spider);
 
@@ -27,4 +30,5 @@ public interface CoinService {
     CoinBean getCoinInfoById(String id, String symbol);
 
     int getCoinInfo();
+    void handleMainSiteCoinBeans(List<CoinBean> coinBeanList);
 }

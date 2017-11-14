@@ -9,6 +9,7 @@ import com.btc.app.spider.http.CoinMarketAPIHttpSpiderService;
 import com.btc.app.spider.http.WeiboHttpSpiderService;
 import com.btc.app.spider.service.*;
 import com.btc.app.statistics.SystemStatistics;
+import com.btc.app.util.CoinNameMapper;
 
 import java.util.concurrent.*;
 
@@ -61,8 +62,11 @@ public class SchedulerThread extends Thread {
 //                        url = String.format("https://coinmarketcap.com/%s#CNY", j);
 //                        executor.execute(new CoinMarketCapHtmlUnitSpiderService(coinService, url));
                     }*/
-                    for (String convert : markets) {
-                        executor.execute(new CoinMarketAPIHttpSpiderService(coinService, convert));
+//                    for (String convert : markets) {
+//                        executor.execute(new CoinMarketAPIHttpSpiderService(coinService, convert));
+//                    }
+                    for(String siteid: CoinNameMapper.OTHER_PLATFORM_MAP.keySet()){
+                        executor.execute(new CoinListHtmlUnitSpiderService(coinService, siteid));
                     }
 //                  executor.execute(new BitFinexHtmlUnitSpiderService(coinService, url));
                 }

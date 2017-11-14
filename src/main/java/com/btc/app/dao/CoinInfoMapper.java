@@ -10,6 +10,5 @@ public interface CoinInfoMapper {
     int insert(CoinInfoBean record);
     CoinInfoBean testConnect();
     List<CoinInfoBean> getAll();
-    CoinInfoBean getCoinInfo(String symbol);
-    int update(CoinInfoBean bean);
+    CoinInfoBean getCoinInfo(String coinid);
 }

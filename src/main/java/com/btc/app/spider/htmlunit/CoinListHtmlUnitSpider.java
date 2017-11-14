@@ -3,11 +3,11 @@ package com.btc.app.spider.htmlunit;
 import com.btc.app.bean.CoinBean;
 import com.btc.app.bean.CoinInfoBean;
 import com.btc.app.spider.htmlunit.inter.CoinHumlUnitSpider;
+import com.btc.app.util.CoinNameMapper;
 import com.btc.app.util.MarketTypeMapper;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlImage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
@@ -16,20 +16,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.btc.app.spider.service.FeiXiaoHaoHtmlUnitSpiderService.FXH_URL;
-
 /**
  * Created by cuixuan on 2017/8/23.
  */
-public class CoinMarketCapHtmlUnitSpider extends HtmlUnitBasicSpider implements CoinHumlUnitSpider {
+public class CoinListHtmlUnitSpider extends HtmlUnitBasicSpider implements CoinHumlUnitSpider {
     private int count = 0;
     private List<CoinBean> coinBeanList;
+    private String siteid;
 
-    public CoinMarketCapHtmlUnitSpider(String url) throws InterruptedException {
-        super(url);
-    }
-    public CoinMarketCapHtmlUnitSpider(String url, int timewait) throws InterruptedException {
-        super(url,timewait);
+    public CoinListHtmlUnitSpider(String siteid) throws InterruptedException {
+        super(String.format("https://coinmarketcap.com/exchanges/%s/", siteid));
+        this.siteid = siteid;
     }
 
     @Override
@@ -40,56 +37,35 @@ public class CoinMarketCapHtmlUnitSpider extends HtmlUnitBasicSpider implements 
 //        for(HtmlAnchor anchor: anchors) {
 //            System.out.println(anchor.getTextContent());
 //            anchor.click();
-            HtmlTable table = this.page.getFirstByXPath(".//table[@id=\"currencies\"]");
+            HtmlTable table = this.page.getFirstByXPath(".//div[@id=\"markets\"]//table");
             for (int i = 1; i < table.getRowCount(); i++) {
                 HtmlTableRow row = table.getRow(i);
                 int rank = Integer.valueOf(row.getCell(0).getTextContent().trim());
-                String chineseName = row.getCell(1).getTextContent().trim();
-//                String englishName = row.getCell(2).getTextContent().trim();
+                String englishName = row.getCell(1).getTextContent().trim();
                 HtmlAnchor anchor = row.getCell(1).getFirstByXPath(".//a");
                 String url = anchor.getHrefAttribute().trim();//   /currencies/bitcoin/
-                String imageurl = "https://files.coinmarketcap.com/static/img/coins/128x128/"+url.substring(12,url.length()-1)+".png";
-                //https://files.coinmarketcap.com/static/img/coins/32x32/bitcoin.png
+                String coinid = url.substring(12,url.length()-1);
 
-                BigDecimal totalVolume = strToBigDecimal(row.getCell(2).getTextContent());
-                BigDecimal price = strToBigDecimal(row.getCell(3).getTextContent());
-                BigDecimal totalNum = strToBigDecimal(row.getCell(4).getTextContent().trim());
-                String numStr = row.getCell(4).getTextContent().trim();
-                StringBuffer buffer= new StringBuffer();
-
-                for(char ch:numStr.toCharArray()){
-                    if(ch>='A' && ch<='Z'){
-                        buffer.append(ch);
-                    }
-                }
-                String englishName = buffer.toString();
-                BigDecimal turnVolume = strToBigDecimal(row.getCell(5).getTextContent());
-
-                BigDecimal percentday = strToBigDecimal(row.getCell(6).getTextContent());
-//                System.out.println(imageurl);
+                String coinPair = row.getCell(2).getTextContent().trim();
+                BigDecimal volume = strToBigDecimal(row.getCell(3).getTextContent());
+                BigDecimal price = strToBigDecimal(row.getCell(4).getTextContent().trim());
+                BigDecimal percent = strToBigDecimal(row.getCell(5).getTextContent().trim());
                 CoinBean bean = new CoinBean();
-                /*
-                CoinInfoBean infoBean = new CoinInfoBean();
-                infoBean.setImageurl(imageurl);
-                infoBean.setSymbol(englishName.toUpperCase());
-                infoBean.setEnglishname(englishName);
-                infoBean.setChinesename(chineseName);*/
-
-                bean.setPlatform("COINMARKET");
+                bean.setCoin_id(coinid);
+                bean.setPlatform(this.url);
                 bean.setPrice(price);
-                bean.setPercent(percentday);
+                bean.setPercent(percent);
                 bean.setUpdate_time(new Date());
-                bean.setTurnvolume(totalVolume);
+                bean.setTurnvolume(volume);
                 bean.setEnglishname(englishName);
-                bean.setChinesename(chineseName);
                 String current_url = this.page.getUrl().toString();
                 bean.setUrl(current_url);
-                String market = current_url.split("#")[1];
-                bean.setMarket_type(MarketTypeMapper.getMarketType(market));
-                bean.setTurnnumber(totalNum);
+                String[] marketPair = coinPair.split("/");
+                int mfrom = MarketTypeMapper.getMarketType(marketPair[0]);
+                int mto = MarketTypeMapper.getMarketType(marketPair[1]);
+                bean.setMarket_type(mfrom << 6 + mto);
                 bean.setRank(rank);
-//                bean.setInfoBean(infoBean);
-//                System.out.println(bean);
+                System.out.println(bean);
                 coinBeanList.add(bean);
             }
 //        }
@@ -143,8 +119,8 @@ public class CoinMarketCapHtmlUnitSpider extends HtmlUnitBasicSpider implements 
         //https://www.chbtc.com/
         //http://www.feixiaohao.com/all/#CNY
         //https://coinmarketcap.com/currencies/views/all/
-        CoinMarketCapHtmlUnitSpider spider;
-        spider = new CoinMarketCapHtmlUnitSpider("https://coinmarketcap.com/1#CNY",30);
+        CoinListHtmlUnitSpider spider;
+        spider = new CoinListHtmlUnitSpider("bitfinex");
         try {
             spider.setJavaScriptEnabled(false);
             //ProxyBean bean = new ProxyBean("116.196.94.105",1080, Proxy.Type.SOCKS,"");

@@ -52,9 +52,19 @@ public class IndexController {
     @RequestMapping("/testcoin")
     public String testcoin(HttpServletRequest request, Model model) {
         CoinBean bean = coinService.testConnection();
-        coinService.insertCoinInfo(bean);
+        coinService.insertCoin(bean);
         model.addAttribute("value", JSON.toJSON(bean));
         return "/test";
+    }
+
+    @RequestMapping("/siteinfo")
+    public @ResponseBody
+    String getSiteInfo(HttpServletRequest request) {
+        String coinid = request.getParameter("id");
+        List<CoinBean> lists = coinService.getCoinById(coinid);
+        JsonValueFilter valueFilter = new JsonValueFilter();
+        String str = JSON.toJSONString(lists, valueFilter, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        return str;
     }
 
     @RequestMapping("/appinfo")
@@ -105,7 +115,8 @@ public class IndexController {
             logger.info(e.getMessage());
 //            coinBeanList = coinService.getCoinInfoByRank("BTC",0,20);
         }
-        String str = JSON.toJSONString(coinBeanList, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        JsonValueFilter valueFilter = new JsonValueFilter();
+        String str = JSON.toJSONString(coinBeanList, valueFilter, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
         return str;
     }
 
@@ -121,7 +132,8 @@ public class IndexController {
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
-        String str = JSON.toJSONString(bean, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        JsonValueFilter valueFilter = new JsonValueFilter();
+        String str = JSON.toJSONString(bean,valueFilter,  SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
         return str;
     }
 
@@ -142,7 +154,8 @@ public class IndexController {
             logger.info(e.getMessage());
 //            coinBeanList = coinService.getCoinInfoByRank("BTC",0,20);
         }
-        String str = JSON.toJSONString(coinBeanList, SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        JsonValueFilter valueFilter = new JsonValueFilter();
+        String str = JSON.toJSONString(coinBeanList, valueFilter,  SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
         return str;
     }
 
