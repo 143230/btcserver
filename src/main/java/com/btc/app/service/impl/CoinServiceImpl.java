@@ -32,7 +32,7 @@ public class CoinServiceImpl implements CoinService {
     private CoinInfoMapper coinInfoDao;
     //    private Map<CoinBean, CoinBean> coinBeanMap;
     private Map<String, Map<CoinBean, CoinBean>> coinMarketMap;
-    private Map<String, Map<CoinBean, CoinBean>> mainsitecoinMap;
+    private Map<String, Map<String, CoinBean>> mainsitecoinMap;
     private Map<String, CoinInfoBean> coinInfoBeanMap;
     private AtomicInteger coinNumber = new AtomicInteger();
     private XinGePush xgpush = XinGePush.getInstance();
@@ -218,18 +218,36 @@ public class CoinServiceImpl implements CoinService {
     public List<CoinBean> getCoinById(String coinid){
         List<CoinBean> lists = new ArrayList<CoinBean>();
         if(mainsitecoinMap == null){
-            loadMainSiteMap();
+            //loadMainSiteMap();
+            return lists;
         }
-        for(String siteid: this.mainsitecoinMap.keySet()){
-            Map<CoinBean, CoinBean> coinBeanMap = this.mainsitecoinMap.get(siteid);
-            for(Map.Entry<CoinBean, CoinBean> entry:coinBeanMap.entrySet()){
-                CoinBean bean = entry.getValue();
-                if(bean.getCoin_id() != null && bean.getCoin_id().equals(coinid)){
-                    lists.add(bean);
-                }
-            }
+        Map<String, CoinBean> map = mainsitecoinMap.get(coinid);
+        if(map == null) return lists;
+        for(String platform: map.keySet()){
+            CoinBean bean = map.get(platform);
+            lists.add(bean);
         }
         return lists;
+    }
+
+    public List<CoinBean> getCoinByPattern(String pattern, String symbol) {
+        List<CoinBean> coinBeans = getTodayCoinInfo(symbol);
+        List<CoinBean> beanList = new ArrayList<CoinBean>();
+        for(CoinBean bean:coinBeans){
+            String id = bean.getCoin_id();
+            CoinInfoBean infoBean = bean.getInfoBean();
+            if(id.matches(pattern)){
+                beanList.add(bean);
+                continue;
+            }
+            if(infoBean == null)continue;
+            String englishName = infoBean.getEnglishname();
+            String chineseName = infoBean.getChinesename();
+            if(englishName.matches(pattern) || chineseName.matches(pattern)){
+                beanList.add(bean);
+            }
+        }
+        return beanList;
     }
 
     public CoinBean getCoinInfoById(String target_id, String symbol) {
@@ -245,28 +263,33 @@ public class CoinServiceImpl implements CoinService {
     }
 
     public void handleMainSiteCoinBeans(List<CoinBean> coinBeanList) {
-        loadInfoBeanMap();
-        loadMainSiteMap();
+//        loadInfoBeanMap();
+//        loadMainSiteMap();
+        if(mainsitecoinMap == null){
+            System.out.println("开始加载币列表");
+            mainsitecoinMap = new ConcurrentHashMap<String, Map<String, CoinBean>>();
+        }
         for (CoinBean bean : coinBeanList) {
             String platform = bean.getPlatform();
-            Map<CoinBean, CoinBean> map;
-            if (mainsitecoinMap.containsKey(platform)) {
-                map = mainsitecoinMap.get(platform);
-                if (map.containsKey(bean)) {
-                    map.remove(bean);
+            String coinid = bean.getCoin_id();
+            Map<String, CoinBean> map;
+            if (mainsitecoinMap.containsKey(coinid)) {
+                map = mainsitecoinMap.get(coinid);
+                if (map.containsKey(platform)) {
+                    map.remove(platform);
                 }
             }else{
-                map = new ConcurrentHashMap<CoinBean, CoinBean>();
+                map = new ConcurrentHashMap<String, CoinBean>();
             }
-            map.put(bean, bean);
-            mainsitecoinMap.put(platform, map);
+            map.put(platform, bean);
+            mainsitecoinMap.put(coinid, map);
             //insertCoinInfo(bean);
         }
     }
 
     private void loadMainSiteMap(){
         if (mainsitecoinMap == null) {
-            mainsitecoinMap = new ConcurrentHashMap<String, Map<CoinBean, CoinBean>>();
+            mainsitecoinMap = new ConcurrentHashMap<String, Map<String, CoinBean>>();
             logger.info("加载MainSite数据库数据中...");
             long now = System.currentTimeMillis();
             for(String siteid: CoinNameMapper.OTHER_PLATFORM_MAP.keySet()) {
@@ -275,18 +298,15 @@ public class CoinServiceImpl implements CoinService {
                 logger.info("数据库总数据：" + todayBeans.size());
                 for (CoinBean bean : todayBeans) {
                     String coinid = bean.getCoin_id();
-                    if (coinInfoBeanMap.containsKey(coinid)) {
-                        bean.setInfoBean(coinInfoBeanMap.get(coinid));
-                    }
                     if (coinid == null) continue;
-                    Map<CoinBean, CoinBean> map;
-                    if (mainsitecoinMap.containsKey(platform)) {
-                        map = mainsitecoinMap.get(platform);
+                    Map<String, CoinBean> map;
+                    if (mainsitecoinMap.containsKey(coinid)) {
+                        map = mainsitecoinMap.get(coinid);
                     } else {
-                        map = new ConcurrentHashMap<CoinBean, CoinBean>();
+                        map = new ConcurrentHashMap<String, CoinBean>();
                     }
-                    map.put(bean, bean);
-                    mainsitecoinMap.put(platform, map);
+                    map.put(platform, bean);
+                    mainsitecoinMap.put(coinid, map);
                 }
             }
             long end = System.currentTimeMillis();

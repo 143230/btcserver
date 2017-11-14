@@ -159,6 +159,27 @@ public class IndexController {
         return str;
     }
 
+    @RequestMapping(value = "/search", produces = "application/json; charset=utf-8")
+    public @ResponseBody
+    String getSearchResult(HttpServletRequest request) {
+        List<CoinBean> coinBeanList = null;
+        try {
+            String symbol = request.getParameter("symbol");
+            String pattern = request.getParameter("pattern");
+            if(symbol == null){
+                symbol="USD";//default
+            }
+            pattern = "^.*" + pattern + ".*$";
+            coinBeanList = coinService.getCoinByPattern(pattern, symbol.toUpperCase());
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+//            coinBeanList = coinService.getCoinInfoByRank("BTC",0,20);
+        }
+        JsonValueFilter valueFilter = new JsonValueFilter();
+        String str = JSON.toJSONString(coinBeanList, valueFilter,  SerializerFeature.WriteMapNullValue, SerializerFeature.PrettyFormat);
+        return str;
+    }
+
     @RequestMapping(value = "/newsInfo", produces = "application/json; charset=utf-8")
     public @ResponseBody
     String getNewsInfo(HttpServletRequest request) {

@@ -15,6 +15,7 @@ public interface CoinService {
     int insertCoinInfo(CoinInfoBean bean);
     int insertCoin(CoinBean bean);
     List<CoinBean> getCoinById(String coinid);
+    List<CoinBean> getCoinByPattern(String pattern, String symbol);
 
     void handleResult(JubiSpider spider);
 

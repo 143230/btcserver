@@ -62,9 +62,9 @@ public class SchedulerThread extends Thread {
 //                        url = String.format("https://coinmarketcap.com/%s#CNY", j);
 //                        executor.execute(new CoinMarketCapHtmlUnitSpiderService(coinService, url));
                     }*/
-//                    for (String convert : markets) {
-//                        executor.execute(new CoinMarketAPIHttpSpiderService(coinService, convert));
-//                    }
+                    for (String convert : markets) {
+                        executor.execute(new CoinMarketAPIHttpSpiderService(coinService, convert));
+                    }
                     for(String siteid: CoinNameMapper.OTHER_PLATFORM_MAP.keySet()){
                         executor.execute(new CoinListHtmlUnitSpiderService(coinService, siteid));
                     }

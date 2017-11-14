@@ -33,7 +33,7 @@ public class FeiXiaoHaoCoinInfoHtmlUnitSpiderService extends BasicHtmlUnitSpider
                 spider = new FeiXiaoHaoCoinInfoSpider(driver, coinid);
                 spider.openAndWait();
                 spider.parseHtml(10);
-                coinService.insertCoinInfo(spider.getInfoBean());
+//                coinService.insertCoinInfo(spider.getInfoBean());
                 System.out.println(spider.getInfoBean());
                 driver.get("about:blank");
             }
