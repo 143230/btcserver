@@ -241,6 +241,18 @@
       <artifactId>jbrowserdriver</artifactId>
       <version>0.17.9</version>
     </dependency>
+    <dependency>
+      <groupId>cn.wanghaomiao</groupId>
+      <artifactId>JsoupXpath</artifactId>
+      <version>0.3.2</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/dom4j/dom4j -->
+    <dependency>
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+
 
   </dependencies>
 

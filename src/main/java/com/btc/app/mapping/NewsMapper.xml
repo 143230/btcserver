@@ -7,13 +7,14 @@
         <result column="new_type" property="new_type" jdbcType="INTEGER"/>
         <result column="imageurl" property="imageurl" jdbcType="VARCHAR"/>
         <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
         <result column="webname" property="webname" jdbcType="VARCHAR"/>
         <result column="webicon" property="webicon" jdbcType="VARCHAR"/>
         <result column="abstracts" property="abstracts" jdbcType="VARCHAR"/>
         <result column="update_time" property="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, url, new_type, imageurl,webicon,webname, title,abstracts,update_time
+    id, url, new_type, imageurl,webicon,webname, title,content,abstracts,update_time
   </sql>
 
     <select id="testConnect" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -40,8 +41,8 @@
 
     <insert id="insert" parameterType="com.btc.app.bean.NewsBean">
     insert into news (url,new_type,webicon,webname,
-      imageurl, title,abstracts,update_time)
+      imageurl, title,content, abstracts,update_time)
     values (#{url,jdbcType=VARCHAR}, #{new_type,jdbcType=INTEGER}, #{webicon,jdbcType=INTEGER}, #{webname,jdbcType=INTEGER},
-     #{imageurl,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR}, #{abstracts,jdbcType=VARCHAR},#{update_time,jdbcType=TIMESTAMP})
+     #{imageurl,jdbcType=VARCHAR},#{title,jdbcType=VARCHAR},#{content,jdbcType=VARCHAR}, #{abstracts,jdbcType=VARCHAR},#{update_time,jdbcType=TIMESTAMP})
   </insert>
 </mapper>

@@ -12,12 +12,22 @@ public class NewsBean {
     private int new_type;
     private String imageurl;
     private String title;
+    private String content;
     private String abstracts;
     private Date update_time;
 
     public String getWebname() {
         return webname;
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
 
     public void setWebname(String webname) {
         this.webname = webname;

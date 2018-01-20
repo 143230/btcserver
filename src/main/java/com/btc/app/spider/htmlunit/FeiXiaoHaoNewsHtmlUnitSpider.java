@@ -4,6 +4,7 @@ import com.btc.app.bean.CoinBean;
 import com.btc.app.bean.NewsBean;
 import com.btc.app.spider.htmlunit.inter.CoinHumlUnitSpider;
 import com.btc.app.spider.htmlunit.inter.NewsHtmlUnitSpider;
+import com.btc.app.spider.htmlunit.news.NormalNews;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.*;
@@ -46,6 +47,8 @@ public class FeiXiaoHaoNewsHtmlUnitSpider extends HtmlUnitBasicSpider implements
             Date date = sdf.parse(time);
             NewsBean newsBean = new NewsBean();
             newsBean.setUrl(url);
+            String content = NormalNews.getContent(url);
+            newsBean.setContent(content);
             newsBean.setTitle(title);
             newsBean.setUpdate_time(date);
             newsBean.setNew_type(1);
