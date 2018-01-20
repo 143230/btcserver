@@ -39,6 +39,12 @@ public class NormalNews{
             return normalContent(url, "//article");
         }else if(host.equals("cex.com")){
             return normalContent(url, ".//div[@class='txt']");
+        }else if(host.equals("help.big.one")){
+            return normalContent(url, "//div[@class='article-body']");
+        }else if(host.equals("www.fatbtc.com")){
+            return normalContent(url, "//div[@class='blog-post show1']");
+        }else if(host.equals("news.kucoin.com")){
+            return normalContent(url, "//div[@class='post-content']");
         }
         return "";
     }
@@ -47,7 +53,9 @@ public class NormalNews{
         NormalNews news = new NormalNews();
 //        String content = news.getContent("https://binance.zendesk.com/hc/zh-cn/articles/115003739611-币安系统升级公告");
 //        String content = news.getContent("https://www.zb.com/i/blog?item=116&type=");
-        String content = news.getContent("https://cex.com/Art/details/id/48.html");
+//        String content = news.getContent("https://cex.com/Art/details/id/48.html");
+//        String content = news.getContent("https://www.fatbtc.com/news-detail-37.htm");
+        String content = news.getContent("https://news.kucoin.com/singularitynet-agi%E4%BA%8E2018%E5%B9%B41%E6%9C%8820%E6%97%A5%E4%B8%8A%E7%BA%BFkucoin/");
         System.out.println(content);
     }
 }
